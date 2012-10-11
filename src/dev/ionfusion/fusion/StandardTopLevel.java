@@ -347,4 +347,10 @@ final class StandardTopLevel
 
         return call((Procedure) procedure, arguments);
     }
+
+    @Override
+    public EvalContext getEvalContext()
+    {
+        return myEvaluator;
+    }
 }

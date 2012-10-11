@@ -47,6 +47,9 @@ import java.io.File;
  */
 public interface TopLevel
 {
+    public EvalContext getEvalContext();
+
+
     /**
      * Evaluates top-level forms within this namespace.
      * Top-level {@code define} forms will alter the environment and will be

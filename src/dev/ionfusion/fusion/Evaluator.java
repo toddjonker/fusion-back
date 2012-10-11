@@ -43,6 +43,7 @@ import java.util.Map;
  * Main entry point to the Fusion evaluation engine.
  */
 class Evaluator
+    implements EvalContext
 {
     private final GlobalState myGlobalState;
     private final IonSystem mySystem;

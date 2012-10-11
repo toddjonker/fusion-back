@@ -632,6 +632,12 @@ public final class FusionString
     }
 
 
+    static Object makeString(EvalContext eval, String value)
+    {
+        return ((Evaluator)eval).newString(value);
+    }
+
+
     static final class AppendProc
         extends Procedure
     {
