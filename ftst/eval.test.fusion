@@ -1,5 +1,7 @@
 // Copyright (c) 2012-2016 Amazon.com, Inc.  All rights reserved.
 
+(require "/eval_lookups")
+
 (require
   "/fusion/eval"
   "/fusion/experimental/check"

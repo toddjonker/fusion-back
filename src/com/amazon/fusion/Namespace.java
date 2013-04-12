@@ -382,11 +382,13 @@ abstract class Namespace
     final SyntaxValue syntaxIntroduce(SyntaxValue source)
         throws FusionException
     {
+        // TODO FUSION-117 precedence to existing top-level, module bindings
+
         // TODO there's a case where we are applying the same wraps that are
         // already on the source.  This happens when expand-ing (and maybe when
         // eval-ing at top-level source that's from that same context.
-        source = source.addWraps(myWraps);
-        return source;
+
+        return source.addWraps(myWraps);
     }
 
 

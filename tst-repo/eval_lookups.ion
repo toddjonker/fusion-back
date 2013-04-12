@@ -1,0 +1,17 @@
+(module eval_lookups '/fusion/base'
+  (use '/check')
+  (use '/fusion/eval')
+  (use '/fusion/namespace')
+  (use '/fusion/parameter')
+  (use '/fusion/syntax')
+
+  (use '/module/dupe1')
+
+  (parameterize [(current_namespace (make_namespace_with_language "/fusion/base"))]
+    (eval (quote (use '/module/dupe1')))
+    (eval (quote (use '/fusion/syntax')))
+    (eval (quote (define dupe 114)))
+    (check = (eval (quote_syntax dupe)) 1)
+    (check = (eval (quote        dupe)) 114))
+
+)
