@@ -55,6 +55,7 @@
     (lambda (stx)
       (quasisyntax
         (define top (unsyntax (cadr (syntax-e stx)))))))
+  (define-syntax ttop (lambda (stx) (quasisyntax #'top)))
   (define-syntax defpubtop
     (lambda (stx)
       (quasisyntax
@@ -68,6 +69,16 @@
 
 (module M3 racket
   (require 'M2)
+  
+  ;; Here I'm trying to understand how all-defined-out works.
+  ;; See the code in racket/privatereqprov.rkt
+  ;; From its code I'd expect this test to fail since they macro-introduced
+  ;; `top` is not exported. So either the syntax-local-module-defined-identifiers
+  ;; is doing something magic, or free-identifier=? is, or this check is wrong.
+  
+  (require rackunit)
+  (check-true (free-identifier=? (ttop) #'top))
+  
   (deftop "inside M3")
   ;; This should not export top since it was introduced via macro
   (provide (all-defined-out)))

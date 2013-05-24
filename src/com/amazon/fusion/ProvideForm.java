@@ -138,6 +138,15 @@ final class ProvideForm
             // at the same time.
             for (NsBinding binding : moduleNamespace.getBindings())
             {
+                // Here we attempt to get this logic aligned with Racket's
+                // implementation, which uses free-identifier=?
+                // I have so far been unsuccessful at getting it to work.
+                // The tests around M3 seem to be the problem.  Also its
+                // unclear how Racket creates the binding identifiers and
+                // what their lexical context.
+
+                SyntaxSymbol bindingId = binding.getIdentifier();
+
                 // TODO the datum->syntax context should be the whole sexp
                 // form `(all_defined_out)` not just `all_defined_out` but
                 // we don't currently retain context on SyntaxSexp after
@@ -146,12 +155,71 @@ final class ProvideForm
                     datumToSyntax(eval,
                                   SyntaxSymbol.make(binding.getName()),
                                   tag);
+
+                Binding localizedResolved = localized.uncachedResolve();
+
+
+//  binding  resolves    ADO     localized-resolved
+//M1   normal   free        normal  ModuleBinding     SHOULD MATCH
+//M3   macro    free        normal  free              SHOULD NOT MATCH
+//M4   macro    free        macro   free              SHOULD MATCH
+
+                if (true)
+                {
+                    SyntaxSymbol definedId;
+
+                    if (false)
+                    {
+                        // This fails M1
+                        definedId = binding.getIdentifier();
+                    }
+                    else if (true)
+                    {
+                        // This fails M3, definedId resolves free
+                        //   so it incorrectly matches localized
+                        //   which has different marks
+                        //    M3 is where the id shouldn't be exported since
+                        //      all_defined_out was introduced at a diff time
+
+                        definedId = bindingId.copyReplacingBinding(null);
+                    }
+                    else if (false)
+                    {
+                        // This fails M4, doesn't match when it should.
+                        // Probably b/c the id context isn't the module
+                        //    localized resolves free
+                        //    binding.id is free
+                        definedId = bindingId.copyReplacingBinding(binding);
+                    }
+                    else if (true)
+                    {
+                        // in M3 this id still resolves free
+                        definedId = bindingId.copyAndResolveTop();
+                    }
+                    else if (true)
+                    {
+
+                    }
+
+                    Binding definedIdResolved = definedId.resolve();
+//                    assert definedIdResolved.sameTarget(binding);
+
+                    if (localized.freeIdentifierEqual(definedId))
+                    {
+                        // TODO simplify? this copy looks redundant
+                        localized = localized.copyReplacingBinding(binding);
+                        expanded.add(localized);
+                    }
+                }
+                else
+                {
                 localized = localized.copyAndResolveTop();
                 Binding localBinding = moduleNamespace.localResolve(localized);
                 if (localBinding != null && binding.sameTarget(localBinding))
                 {
                     localized = localized.copyReplacingBinding(binding);
                     expanded.add(localized);
+                }
                 }
 
                 // TODO FUSION-136 handle rename-transformers per Racket
