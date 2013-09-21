@@ -73,6 +73,17 @@ class ModuleNamespace
         }
 
         @Override
+        CompiledForm compileDefineSyntax(Evaluator eval,
+                                         Environment env,
+                                         SyntaxSymbol id,
+                                         CompiledForm valueForm)
+            throws FusionException
+        {
+            return env.namespace().compileDefineSyntax(eval, this,
+                                                       id, valueForm);
+        }
+
+        @Override
         public CompiledForm compileTopReference(Evaluator eval,
                                                 Environment env,
                                                 SyntaxSymbol id)
@@ -296,7 +307,32 @@ class ModuleNamespace
     {
         String name = binding.getName();
         return new CompiledTopDefine(name, binding.myAddress, valueForm);
+    }
 
+
+    @Override
+    CompiledForm compileDefineSyntax(Evaluator eval,
+                                     FreeBinding binding,
+                                     SyntaxSymbol id,
+                                     CompiledForm valueForm)
+        throws FusionException
+    {
+        // This happens during module expansion.
+        // TODO we really shouldn't create the binding until after evaluating
+        //
+        return new TopLevelNamespace.CompiledFreeDefineSyntax(id, valueForm);
+    }
+
+    @Override
+    CompiledForm compileDefineSyntax(Evaluator eval,
+                                     ModuleBinding binding,
+                                     SyntaxSymbol id,
+                                     CompiledForm valueForm)
+        throws FusionException
+    {
+        // This happens during module compilation.
+        String name = id.stringValue();
+        return new CompiledTopDefineSyntax(name, binding.myAddress, valueForm);
     }
 
 

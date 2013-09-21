@@ -166,4 +166,34 @@
   20 "20")
 
 
+(define_syntax let   // (let var val body)
+  (lambda (stx)
+    (let ((var  (syntax_get stx 1))
+          (val  (syntax_get stx 2))
+          (body (syntax_get stx 3)))
+      (quasisyntax
+        ((lambda ((unsyntax var)) (unsyntax body))
+         (unsyntax val))))))
+
+(check = 12
+  (let x 437 12))
+
+
+(module Let "/fusion/base"
+  (require
+    "/check"
+    "/fusion/experimental/syntax")
+  (define_syntax let   // (let var val body)
+    (lambda (stx)
+      (let ((var  (syntax_get stx 1))
+            (val  (syntax_get stx 2))
+            (body (syntax_get stx 3)))
+        (quasisyntax
+          ((lambda ((unsyntax var)) (unsyntax body))
+           (unsyntax val))))))
+  (check = 12
+    (let x 437 12)))
+(require "Let")
+
+
 "PASSED" // Helpful output if you run this stand-alone

@@ -3,6 +3,7 @@
 package com.amazon.fusion;
 
 import static com.amazon.fusion.FusionVoid.voidValue;
+import static com.amazon.fusion.FusionWrite.safeWriteToString;
 import com.amazon.fusion.ModuleNamespace.ModuleBinding;
 import java.util.Iterator;
 import java.util.Set;
@@ -120,11 +121,19 @@ class TopLevelNamespace
         @Override
         CompiledForm compileDefineSyntax(Evaluator eval,
                                          Environment env,
+                                         SyntaxSymbol id,
                                          CompiledForm valueForm)
+            throws FusionException
         {
             // TODO FUSION-192 This should bind after evaluation, as 'define'.
-            assert myTarget == this;
-            return super.compileDefineSyntax(eval, env, valueForm);
+            if (myTarget == this)
+            {
+                return env.namespace().compileDefineSyntax(eval,
+                                                           (FreeBinding) null,
+                                                           id, valueForm);
+            }
+
+            return myTarget.compileDefineSyntax(eval, env, id, valueForm);
         }
 
         @Override
@@ -464,6 +473,28 @@ class TopLevelNamespace
 
 
     @Override
+    CompiledForm compileDefineSyntax(Evaluator eval,
+                                     FreeBinding binding,
+                                     SyntaxSymbol id,
+                                     CompiledForm valueForm)
+        throws FusionException
+    {
+        return new CompiledFreeDefineSyntax(id, valueForm);
+    }
+
+
+    @Override
+    CompiledForm compileDefineSyntax(Evaluator eval,
+                                     ModuleBinding binding,
+                                     SyntaxSymbol id,
+                                     CompiledForm valueForm)
+        throws FusionException
+    {
+        return new CompiledFreeDefineSyntax(id, valueForm);
+    }
+
+
+    @Override
     CompiledForm compileFreeTopReference(SyntaxSymbol identifier)
     {
         return new CompiledFreeVariableReference(identifier);
@@ -473,7 +504,7 @@ class TopLevelNamespace
     //========================================================================
     // Compiled Forms
 
-    private static final class CompiledFreeDefine
+    private static class CompiledFreeDefine
         implements CompiledForm
     {
         private final SyntaxSymbol myId;
@@ -493,9 +524,9 @@ class TopLevelNamespace
 
             value = processValue(eval, store, value);
 
-            TopLevelNamespace ns = (TopLevelNamespace) store.namespace();
+            Namespace ns = (Namespace) store.namespace();
             SyntaxSymbol boundId = ns.predefine(myId, myId);
-            TopLevelBinding binding = (TopLevelBinding) boundId.getBinding();
+            NsBinding binding = (NsBinding) boundId.getBinding();
 
             ns.set(binding.myAddress, value);
 
@@ -510,6 +541,36 @@ class TopLevelNamespace
         Object processValue(Evaluator eval, Store store, Object value)
             throws FusionException
         {
+            return value;
+        }
+    }
+
+
+    protected static final class CompiledFreeDefineSyntax
+        extends CompiledFreeDefine
+    {
+        CompiledFreeDefineSyntax(SyntaxSymbol id, CompiledForm valueForm)
+        {
+            super(id, valueForm);
+        }
+
+        @Override
+        Object processValue(Evaluator eval, Store store, Object value)
+            throws FusionException
+        {
+            if (value instanceof Procedure)
+            {
+                Procedure xformProc = (Procedure) value;
+                value = new MacroTransformer(xformProc);
+            }
+            else if (! (value instanceof SyntacticForm))
+            {
+                String message =
+                    "define_syntax value is not a transformer: " +
+                    safeWriteToString(eval, value);
+                throw new ContractException(message);
+            }
+
             return value;
         }
     }

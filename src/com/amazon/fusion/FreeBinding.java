@@ -58,6 +58,17 @@ final class FreeBinding
     }
 
     @Override
+    CompiledForm compileDefineSyntax(Evaluator eval,
+                                     Environment env,
+                                     SyntaxSymbol id,
+                                     CompiledForm valueForm)
+        throws FusionException
+    {
+        return env.namespace().compileDefineSyntax(eval, this,
+                                                   id, valueForm);
+    }
+
+    @Override
     public CompiledForm compileReference(Evaluator eval, Environment env)
         throws FusionException
     {

@@ -75,14 +75,6 @@ abstract class Namespace
             throw new ContractException(message);
         }
 
-        CompiledForm compileDefineSyntax(Evaluator eval,
-                                         Environment env,
-                                         CompiledForm valueForm)
-        {
-            String name = getName();
-            return new CompiledTopDefineSyntax(name, myAddress, valueForm);
-        }
-
         @Override
         public boolean equals(Object other)
         {
@@ -424,6 +416,19 @@ abstract class Namespace
         throws FusionException;
 
 
+    abstract CompiledForm compileDefineSyntax(Evaluator eval,
+                                              FreeBinding binding,
+                                              SyntaxSymbol id,
+                                              CompiledForm valueForm)
+        throws FusionException;
+
+    abstract CompiledForm compileDefineSyntax(Evaluator eval,
+                                              ModuleBinding binding,
+                                              SyntaxSymbol id,
+                                              CompiledForm valueForm)
+        throws FusionException;
+
+
     /**
      * Compile a free variable reference.  These are allowed at top-level but
      * not within a module.
@@ -650,11 +655,11 @@ abstract class Namespace
     }
 
 
-    private static final class CompiledTopDefineSyntax
+    protected static final class CompiledTopDefineSyntax
         extends CompiledTopDefine
     {
-        private CompiledTopDefineSyntax(String name, int address,
-                                        CompiledForm valueForm)
+        CompiledTopDefineSyntax(String name, int address,
+                                CompiledForm valueForm)
         {
             super(name, address, valueForm);
         }

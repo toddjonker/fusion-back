@@ -38,6 +38,7 @@ final class DefineSyntaxForm
 
         // WARNING!  This isn't conditional as with 'define' since
         // 'define_syntax' doesn't get predefined by the 'module' expander.
+        if (false && expander.isModuleContext())
         {
             Namespace ns = env.namespace();
             assert ns == env;
@@ -75,16 +76,20 @@ final class DefineSyntaxForm
     CompiledForm compile(Evaluator eval, Environment env, SyntaxSexp stx)
         throws FusionException
     {
+        // TODO the second time around (in a Module) this env has been changed
+        //   to contain the bound syntax identifier!  Which means this second
+        //   compilation could turn out differently.
         int arity = stx.size();
         SyntaxValue valueSource = stx.get(eval, arity-1);
         CompiledForm valueForm = eval.compile(env, valueSource);
 
         SyntaxSymbol identifier = (SyntaxSymbol) stx.get(eval, 1);
-        NsBinding binding = (NsBinding) identifier.getBinding();
+        Binding binding = identifier.resolve();
         CompiledForm compiled =
-            binding.compileDefineSyntax(eval, env, valueForm);
+            binding.compileDefineSyntax(eval, env, identifier, valueForm);
 
         if (arity != 3
+            && binding instanceof NsBinding  // FIXME make sure this works
             && eval.firstContinuationMark(COLLECT_DOCS_MARK) != null)
         {
             // We have documentation. Sort of.
@@ -93,7 +98,8 @@ final class DefineSyntaxForm
                                             Kind.SYNTAX,
                                             null, // usage
                                             docString.stringValue());
-            env.namespace().setDoc(binding.myAddress, doc);
+            int address = ((NsBinding) binding).myAddress;
+            env.namespace().setDoc(address, doc);
         }
 
         return compiled;
