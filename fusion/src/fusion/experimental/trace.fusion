@@ -1,0 +1,121 @@
+// Copyright (c) 2013-2014 Amazon.com, Inc.  All rights reserved.
+
+(module log "/fusion"
+
+  (require
+    "/fusion/experimental/syntax"
+    "/fusion/parameter")
+
+
+  (define current_trace_depth
+    (make_parameter 0))
+
+  (define (indent)
+    (let loop [(i (current_trace_depth))]
+      (unless (= 0 i)
+        (display " ")
+        (loop (- i 1)))))
+
+  (define current_trace_entry
+    (make_parameter
+      (lambda (name args)
+        (indent)
+        (apply display "(" name " " args)
+        (displayln ")"))))
+
+  (define current_trace_exit
+    (make_parameter
+      (lambda (name args result)
+        (indent)
+        (displayln "==> " result))))
+
+
+  // TODO handle documentation
+
+  // Thanks to Eli Ford for implementing define-by-example support.
+
+  (define (deftrace_impl orig_name_stx orig_value_stx)
+    (quasisyntax
+      (define (unsyntax orig_name_stx)
+        (let [(original (unsyntax orig_value_stx))]
+          (if (is_procedure original)
+            (lambda args
+              ((current_trace_entry)
+                (quote (unsyntax orig_name_stx))
+                args)
+              (let [(result (parameterize
+                              [(current_trace_depth
+                                (+ 1 (current_trace_depth)))]
+                              (apply original args)))]
+                ((current_trace_exit)
+                  (quote (unsyntax orig_name_stx))
+                  args
+                  result)
+                result))
+            original)))))
+
+  (define_syntax deftrace
+    (lambda (stx)
+      (lets [(header_stx (syntax_get stx 1)),
+             (header_datum (syntax_to_datum header_stx))]
+        (cond ((is_symbol header_datum)
+               (deftrace_impl header_stx (syntax_get stx 2)))
+              ((is_sexp header_datum)
+               (let [(orig_name_stx (syntax_get header_stx 0)),
+                     (arg_names_stx (syntax_subseq header_stx 1)),
+                     (body_stx (syntax_subseq stx 2))]
+                  (deftrace_impl
+                    orig_name_stx
+                    (syntax_append
+                      (quasisyntax (lambda (unsyntax arg_names_stx)))
+                      body_stx))))
+              (true
+               (wrong_syntax stx
+                 "Expected identifier or lambda list, found " header_stx))))))
+
+
+  (provide current_trace_depth current_trace_entry current_trace_exit deftrace)
+
+
+  //==========================================================================
+  // Broken stuff
+
+  // This attempts to use a different definition locally, so calls within the
+  // defining module are not traced.
+
+  (define_syntax deflog
+    (lambda (stx)
+      (lets [(orig_name_stx (syntax_get stx 1)),
+             (orig_name_sym (syntax_unwrap orig_name_stx)),
+             (new_name_stx  (datum_to_syntax
+                              (string_to_symbol
+                                  // Doesn't work, not sure why:
+//                                (symbol_to_string orig_name_sym))
+                                (string_append "_deflog_" orig_name_sym))
+                              orig_name_stx))]
+        (quasisyntax
+          (begin
+            (define (unsyntax orig_name_stx)
+              (unsyntax (syntax_get stx 2)))
+            (define (unsyntax new_name_stx)
+              (if (is_procedure (unsyntax orig_name_stx))
+                (lambda args
+                  ((current_trace_entry) (quote (unsyntax orig_name_stx))
+                    args)
+                  (let [(result (parameterize
+                                  [(current_trace_depth
+                                    (+ 1 (current_trace_depth)))]
+                                  (apply (unsyntax orig_name_stx) args)))]
+                    ((current_trace_exit)
+                      (quote (unsyntax orig_name_stx))
+                      args
+                      result)
+                    result))
+                (unsyntax orig_name_stx)))
+//              (provide (unsyntax new_name_stx))
+            //(provide (rename_out
+            //           ((unsyntax new_name_stx) (unsyntax orig_name_stx))))
+            )))))
+
+  (provide deflog)
+)

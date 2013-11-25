@@ -1,0 +1,4 @@
+// Copyright (c) 2014 Amazon.com, Inc.  All rights reserved.
+
+(require "/fusion/experimental/trace")
+// At least we know the module can be loaded!
