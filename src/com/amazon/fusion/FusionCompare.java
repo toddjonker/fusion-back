@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2014 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2020 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
@@ -146,11 +146,8 @@ final class FusionCompare
                 String left  = unsafeStringToJavaString(eval, arg0);
                 String right = unsafeStringToJavaString(eval, arg1);
 
-                if (left != null && right != null)
-                {
-                    boolean r = compareStrings(left, right, args);
-                    return makeBool(eval, r);
-                }
+                boolean r = compareStrings(left, right, args);  // TODO compare()
+                return makeBool(eval, r);
             }
 
             if (isSymbol(eval, arg0) && isSymbol(eval, arg1))
@@ -160,7 +157,7 @@ final class FusionCompare
 
                 if (left != null && right != null)
                 {
-                    boolean r = compareStrings(left, right, args);
+                    boolean r = compareStrings(left, right, args);  // TODO compare()
                     return makeBool(eval, r);
                 }
             }
