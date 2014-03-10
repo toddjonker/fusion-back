@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2013 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2014 Amazon.com, Inc.  All rights reserved.
 
 (module base "/fusion/private/builtins"
 
@@ -19,7 +19,7 @@ To use this dialect for your module, declare it as follows:
 
   // Pass-through bindings from kernel
   (provide all_defined_out begin define if lambda letrec module provide
-    require)
+    require '#%top_interaction')
   (provide is_bool is_int is_float is_decimal is_symbol
       is_string is_clob is_blob is_list is_sexp is_struct)
   // Note that there's no is_null type checker, since that's used to

@@ -28,6 +28,7 @@ final class GlobalState
     static final String MODULE          = "module";
     static final String PROVIDE         = "provide";
     static final String REQUIRE         = "require";
+    static final String TOP_INTERACTION = "#%top_interaction";
 
     final IonSystem          myIonSystem;
     final ModuleInstance     myKernelModule;
@@ -131,6 +132,7 @@ final class GlobalState
         ns.define(PROVIDE, new ProvideForm());
         ns.define("quote_syntax", new QuoteSyntaxForm()); // For fusion/syntax
         ns.define(REQUIRE, new RequireForm(resolver));
+        ns.define(TOP_INTERACTION, new TopInteractionForm());
 
         ns.define("is_list",   new FusionList.IsListProc());
         ns.define("is_sexp",   new FusionSexp.IsSexpProc());

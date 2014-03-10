@@ -22,7 +22,7 @@ contact us for clarification.
 
 
   // Top-Level Forms
-  (provide begin define)
+  (provide begin define '#%top_interaction')
 
   // Module Forms
   (provide all_defined_out module provide require)

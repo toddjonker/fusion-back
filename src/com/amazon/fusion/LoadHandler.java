@@ -50,6 +50,9 @@ final class LoadHandler
         File file = resolvePath(eval, myCurrentDirectory, path);
         File parent = file.getParentFile();
 
+        SyntaxSymbol tiSym =
+            SyntaxSymbol.make(eval, GlobalState.TOP_INTERACTION);
+
         eval = eval.markedContinuation(myCurrentLoadRelativeDirectory,
                                        makeString(eval, parent.getAbsolutePath()));
 
@@ -66,7 +69,11 @@ final class LoadHandler
                 {
                     result = null;  // Don't hold onto garbage
                     SyntaxValue fileExpr = readSyntax(eval, reader, name);
-                    result = FusionEval.eval(eval, fileExpr, namespace);
+
+                    SyntaxSexp topForm =
+                        SyntaxSexp.make(eval, tiSym, fileExpr);
+
+                    result = FusionEval.eval(eval, topForm, namespace);
                     // TODO TAIL
                 }
 
