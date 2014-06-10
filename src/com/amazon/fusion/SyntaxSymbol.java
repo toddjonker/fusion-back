@@ -414,6 +414,13 @@ final class SyntaxSymbol
                 // TODO FUSION-207 tail expand
                 return expander.expandExpression(env, topExpr);
             }
+
+            // TODO FUSION-31 identifier macros entail extra work here.
+            SyntacticForm xform = resolveSyntaxMaybe(env);
+            if (xform != null)
+            {
+                throw new SyntaxException(text, "invalid syntax", this);
+            }
         }
 
         return this;
