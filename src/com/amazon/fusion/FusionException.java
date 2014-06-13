@@ -3,6 +3,7 @@
 package com.amazon.fusion;
 
 import static com.amazon.fusion.FusionUtils.safeEquals;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +95,88 @@ public class FusionException
                     loc.display(out);
                 }
             }
+        }
+    }
+
+
+    void rewriteStackTrace()
+    {
+        if (myContinuation == null) return;
+
+        ArrayList<StackTraceElement> elts =
+            new ArrayList<>(myContinuation.size());
+
+
+        for (SourceLocation loc : myContinuation)
+        {
+            if (loc != null)
+            {
+                String declaringClass = "Unknown Fusion Source";
+                String methodName     = "";                 // Cannot be null.
+                String fileName       = null;
+                int    lineNumber     = -1;
+
+                SourceName name = loc.getSourceName();
+                if (name != null)
+                {
+                    File f = name.getFile();
+                    if (f != null) fileName = f.getPath();
+
+                    ModuleIdentity id = name.getModuleIdentity();
+                    if (id != null)
+                    {
+                        declaringClass = id.absolutePath();
+                    }
+                    else if (f != null)
+                    {
+                        declaringClass = f.getName();
+                    }
+                }
+
+                long longLine = loc.getLine();
+                if (longLine > 0)
+                {
+                    methodName = "L" + longLine;
+
+                    long longCol  = loc.getColumn();
+                    if (longCol > 0)
+                    {
+                        methodName += ",C" + longCol;
+                    }
+
+                    if (longLine <= Integer.MAX_VALUE)
+                    {
+                        lineNumber = (int) longLine;
+                    }
+                }
+
+                StackTraceElement e =
+                    new StackTraceElement(declaringClass, methodName,
+                                          fileName, lineNumber);
+                elts.add(e);
+            }
+        }
+
+        int size = elts.size();
+        if (size != 0)
+        {
+            int dropFrames = 2;
+
+            // Determine how many frames are below the rewrite point.
+            StackTraceElement[] oldTrace = new Exception().getStackTrace();
+            int oldLen = oldTrace.length - dropFrames;
+
+            // Now get the "real" trace.
+            oldTrace = getStackTrace();
+
+            StackTraceElement[] trace = new StackTraceElement[size + oldLen];
+            elts.toArray(trace);
+
+            System.arraycopy(oldTrace, oldTrace.length - oldLen, trace, size, oldLen);
+
+            setStackTrace(trace);
+
+            myContinuation = null;
         }
     }
 

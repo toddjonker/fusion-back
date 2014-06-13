@@ -60,6 +60,16 @@ public class JavaFfiTest
         }
     }
 
+    public class Unappliable extends Procedure
+    {
+        @Override
+        Object doApply(Evaluator eval, Object[] args)
+            throws FusionException
+        {
+            throw new RuntimeException("boom");
+        }
+    }
+
 
     private String name(Class<?> c)
     {
@@ -88,5 +98,14 @@ public class JavaFfiTest
         expectContractExn("(define foo (java_new " + name(Abstract.class) + "))");
         expectContractExn("(define foo (java_new " + name(Uninstantiable.class) + "))");
         expectContractExn("(define foo (java_new " + name(Uninstantiable.class) + " null))");
-   }
+    }
+
+    @Test
+    public void testCrashingProc()
+        throws Exception
+    {
+        topLevel().define("p", new Unappliable());
+        //topLevel().call("p");
+        topLevel().eval("(map p [1, 2])");
+    }
 }

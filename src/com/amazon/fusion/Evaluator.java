@@ -636,6 +636,12 @@ class Evaluator
                         e.addContext(tail.myLoc);
                         throw e;
                     }
+                    catch (Throwable e)
+                    {
+                        FusionException fe = new FusionException(e);
+                        fe.addContext(tail.myLoc);
+                        throw fe;
+                    }
 
                     continue checkingResult;
                 }
@@ -689,6 +695,12 @@ class Evaluator
             {
                 e.addContext(callLocation);
                 throw e;
+            }
+            catch (Throwable e)
+            {
+                FusionException fe = new FusionException(e);
+                fe.addContext(callLocation);
+                throw fe;
             }
 
             checkingResult: while (true)

@@ -115,6 +115,10 @@ final class StandardTopLevel
 
             return result;
         }
+        catch (FusionException e)
+        {
+            throw rewriteStackTrace(e);
+        }
         catch (FusionInterrupt e)
         {
             throw new FusionInterruptedException(e);
@@ -140,6 +144,10 @@ final class StandardTopLevel
             return load.loadTopLevel(myEvaluator,
                                      myNamespace,
                                      source.toString());
+        }
+        catch (FusionException e)
+        {
+            throw rewriteStackTrace(e);
         }
         catch (FusionInterrupt e)
         {
@@ -171,6 +179,10 @@ final class StandardTopLevel
                 new IonReaderModuleLocation(source, name);
             resolver.loadModule(myEvaluator, id, loc, true /* reload it */);
         }
+        catch (FusionException e)
+        {
+            throw rewriteStackTrace(e);
+        }
         catch (FusionInterrupt e)
         {
             throw new FusionInterruptedException(e);
@@ -185,6 +197,10 @@ final class StandardTopLevel
         try
         {
             myNamespace.require(myEvaluator, modulePath);
+        }
+        catch (FusionException e)
+        {
+            throw rewriteStackTrace(e);
         }
         catch (FusionInterrupt e)
         {
@@ -210,6 +226,10 @@ final class StandardTopLevel
             }
 
             myNamespace.bind(name, fv);
+        }
+        catch (FusionException e)
+        {
+            throw rewriteStackTrace(e);
         }
         catch (FusionInterrupt e)
         {
@@ -256,6 +276,10 @@ final class StandardTopLevel
                                       " is not a procedure: " +
                                       safeWriteToString(myEvaluator, proc));
         }
+        catch (FusionException e)
+        {
+            throw rewriteStackTrace(e);
+        }
         catch (FusionInterrupt e)
         {
             throw new FusionInterruptedException(e);
@@ -286,6 +310,10 @@ final class StandardTopLevel
 
             return myEvaluator.callNonTail(proc, arguments);
         }
+        catch (FusionException e)
+        {
+            throw rewriteStackTrace(e);
+        }
         catch (FusionInterrupt e)
         {
             throw new FusionInterruptedException(e);
@@ -313,5 +341,12 @@ final class StandardTopLevel
         }
 
         return call((Procedure) procedure, arguments);
+    }
+
+
+    private FusionException rewriteStackTrace(FusionException e)
+    {
+        e.rewriteStackTrace();
+        return e;
     }
 }
