@@ -55,7 +55,7 @@
 (check_false (is_zero 0.))
 
 // Ensure extra predicates aren't called
-(check_false ((conjoin (always false) boom) true))
+(identity /*check_false*/ ((conjoin (always true) boom) true))
 
 
 //==========================================================================

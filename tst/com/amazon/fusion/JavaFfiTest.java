@@ -38,7 +38,12 @@ public class JavaFfiTest
         }
     }
 
-    public static class Uninstantiable extends Procedure
+    @SuppressWarnings("serial")
+    static class Boom extends RuntimeException
+    {
+    }
+
+    static class Uninstantiable extends Procedure
     {
         public Uninstantiable()
             throws Exception
@@ -60,13 +65,14 @@ public class JavaFfiTest
         }
     }
 
-    public class Unappliable extends Procedure
+
+    static class Unappliable extends Procedure
     {
         @Override
         Object doApply(Evaluator eval, Object[] args)
             throws FusionException
         {
-            throw new RuntimeException("boom");
+            throw new Boom();
         }
     }
 
@@ -100,12 +106,24 @@ public class JavaFfiTest
         expectContractExn("(define foo (java_new " + name(Uninstantiable.class) + " null))");
     }
 
-    @Test
+    @Test(expected=Boom.class)
     public void testCrashingProc()
         throws Exception
     {
         topLevel().define("p", new Unappliable());
-        //topLevel().call("p");
         topLevel().eval("(map p [1, 2])");
     }
+
+    @Test
+    public void testCrashingProcInModule()
+        throws Exception
+    {
+        topLevel().eval("(module M '/fusion' "
+                        + "(require '/fusion/ffi/java')"
+                        + "(define p (java_new " + name(Uninstantiable.class) + "))"
+                        + "(provide p))");
+        topLevel().eval("(module N '/fusion' (require M))");
+        topLevel().requireModule("N");
+    }
+
 }

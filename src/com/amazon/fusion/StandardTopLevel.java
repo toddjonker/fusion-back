@@ -19,6 +19,7 @@ final class StandardTopLevel
 {
     private final Evaluator myEvaluator;
     private final Namespace myNamespace;
+    private final boolean   isRewritingExceptions = true;
 
 
     /**
@@ -115,13 +116,9 @@ final class StandardTopLevel
 
             return result;
         }
-        catch (FusionException e)
+        catch (Throwable e)
         {
-            throw rewriteStackTrace(e);
-        }
-        catch (FusionInterrupt e)
-        {
-            throw new FusionInterruptedException(e);
+            throw exceptionForExit(e);
         }
     }
 
@@ -145,13 +142,9 @@ final class StandardTopLevel
                                      myNamespace,
                                      source.toString());
         }
-        catch (FusionException e)
+        catch (Throwable e)
         {
-            throw rewriteStackTrace(e);
-        }
-        catch (FusionInterrupt e)
-        {
-            throw new FusionInterruptedException(e);
+            throw exceptionForExit(e);
         }
     }
 
@@ -179,13 +172,9 @@ final class StandardTopLevel
                 new IonReaderModuleLocation(source, name);
             resolver.loadModule(myEvaluator, id, loc, true /* reload it */);
         }
-        catch (FusionException e)
+        catch (Throwable e)
         {
-            throw rewriteStackTrace(e);
-        }
-        catch (FusionInterrupt e)
-        {
-            throw new FusionInterruptedException(e);
+            throw exceptionForExit(e);
         }
     }
 
@@ -198,13 +187,9 @@ final class StandardTopLevel
         {
             myNamespace.require(myEvaluator, modulePath);
         }
-        catch (FusionException e)
+        catch (Throwable e)
         {
-            throw rewriteStackTrace(e);
-        }
-        catch (FusionInterrupt e)
-        {
-            throw new FusionInterruptedException(e);
+            throw exceptionForExit(e);
         }
     }
 
@@ -227,13 +212,9 @@ final class StandardTopLevel
 
             myNamespace.bind(name, fv);
         }
-        catch (FusionException e)
+        catch (Throwable e)
         {
-            throw rewriteStackTrace(e);
-        }
-        catch (FusionInterrupt e)
-        {
-            throw new FusionInterruptedException(e);
+            throw exceptionForExit(e);
         }
     }
 
@@ -246,11 +227,9 @@ final class StandardTopLevel
         {
             return myNamespace.lookup(name);
         }
-        catch (FusionInterrupt e)
+        catch (Throwable e)
         {
-            // I don't think this can happen, but I prefer to be consistent
-            // throughout this class to be more resilient to changes.
-            throw new FusionInterruptedException(e);
+            throw exceptionForExit(e);
         }
     }
 
@@ -276,13 +255,9 @@ final class StandardTopLevel
                                       " is not a procedure: " +
                                       safeWriteToString(myEvaluator, proc));
         }
-        catch (FusionException e)
+        catch (Throwable e)
         {
-            throw rewriteStackTrace(e);
-        }
-        catch (FusionInterrupt e)
-        {
-            throw new FusionInterruptedException(e);
+            throw exceptionForExit(e);
         }
     }
 
@@ -310,13 +285,9 @@ final class StandardTopLevel
 
             return myEvaluator.callNonTail(proc, arguments);
         }
-        catch (FusionException e)
+        catch (Throwable e)
         {
-            throw rewriteStackTrace(e);
-        }
-        catch (FusionInterrupt e)
-        {
-            throw new FusionInterruptedException(e);
+            throw exceptionForExit(e);
         }
     }
 
@@ -344,9 +315,32 @@ final class StandardTopLevel
     }
 
 
-    private FusionException rewriteStackTrace(FusionException e)
+    /**
+     * See {@link FusionException#withContext(Throwable, SourceLocation)}
+     * for parallel code.
+     */
+    private FusionException exceptionForExit(Throwable e)
     {
-        e.rewriteStackTrace();
-        return e;
+        if (e instanceof FusionException)
+        {
+            FusionException fe = (FusionException) e;
+            if (isRewritingExceptions)
+            {
+                fe = fe.rewriteStackTrace(2);
+            }
+            return fe;
+        }
+        else if (e instanceof FusionInterrupt)
+        {
+            return new FusionInterruptedException((FusionInterrupt) e);
+        }
+        else if (e instanceof RuntimeException)
+        {
+            throw (RuntimeException) e;
+        }
+        else
+        {
+            throw (Error) e;
+        }
     }
 }
