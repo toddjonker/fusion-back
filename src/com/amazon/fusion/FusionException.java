@@ -36,20 +36,27 @@ public class FusionException
         super(message);
     }
 
+    private FusionException(String message, Throwable cause, SourceLocation location)
+    {
+        super(message,
+              cause instanceof FusionException ? cause : new StackRewriteException(cause, null));
+        addContext(location);
+    }
+
     FusionException(String message, Throwable cause)
     {
-        super(message, cause);
+        this(message, cause, null);
     }
 
     FusionException(Throwable cause)
     {
-        super(cause.getMessage(), cause);
+        this(cause.getMessage(), cause, null);
     }
 
     FusionException(Throwable cause, SourceLocation location)
     {
-        super(cause.getMessage(), cause);
-        addContext(location);
+        this(cause.getMessage(), cause, location);
+//        addContext(location);
     }
 
 
@@ -98,6 +105,12 @@ public class FusionException
                 // Collapse equal adjacent locations
                 myContinuation.add(location);
             }
+        }
+
+        Throwable cause = getCause();
+        if (cause instanceof FusionException)
+        {
+            ((FusionException) cause).addContext(location);
         }
     }
 
@@ -183,6 +196,12 @@ public class FusionException
             setStackTrace(trace);
 
             myContinuation = null;
+        }
+
+        Throwable cause = getCause();
+        if (cause instanceof FusionException)
+        {
+            ((FusionException) cause).rewriteStackTrace(0);
         }
 
         return this;

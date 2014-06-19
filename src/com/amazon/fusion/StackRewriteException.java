@@ -21,10 +21,11 @@ class StackRewriteException
 
     StackRewriteException(Throwable cause, SourceLocation loc)
     {
-        super(cause);
+        super(cause.getMessage());
         assert ! (cause instanceof FusionException);
-        assert (cause instanceof RuntimeException || cause instanceof Error);
+//        assert (cause instanceof RuntimeException || cause instanceof Error);
 
+        initCause(cause);
         addContext(loc);
     }
 
@@ -74,9 +75,13 @@ class StackRewriteException
             {
                 throw (RuntimeException) cause;
             }
-            else
+            else if (cause instanceof Error)
             {
                 throw (Error) cause;
+            }
+            else // cause is some other Exception
+            {
+                return super.rewriteStackTrace(0);
             }
         }
 
