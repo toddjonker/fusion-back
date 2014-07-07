@@ -9,6 +9,7 @@ import static com.amazon.fusion.FusionUtils.EMPTY_OBJECT_ARRAY;
 import static java.lang.Boolean.TRUE;
 import com.amazon.ion.IonValue;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Models Fusion source code, using a custom DOM implementation of Ion.
@@ -246,9 +247,13 @@ abstract class SyntaxValue
     }
 
 
+    static final AtomicInteger ourAddMarkCounter = new AtomicInteger();
+
     final SyntaxValue addOrRemoveMark(MarkWrap mark)
         throws FusionException
     {
+        ourAddMarkCounter.incrementAndGet();
+
         // TODO FUSION-39 Optimize this. Perhaps remove a matching mark?
         // 2014-07-03 Only 32/906 (3.5%) of marks matched the first wrap.
         //            Eliminating those didn't increase that count.

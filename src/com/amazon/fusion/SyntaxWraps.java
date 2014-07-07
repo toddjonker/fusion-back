@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 final class SyntaxWraps
 {
@@ -33,9 +34,28 @@ final class SyntaxWraps
     }
 
 
+    static final AtomicInteger ourAddWrapCounter = new AtomicInteger();
+    static final AtomicInteger ourAddWrapDupeCounter = new AtomicInteger();
+
     SyntaxWraps addWrap(SyntaxWrap wrap)
     {
+        ourAddWrapCounter.incrementAndGet();
+
         int suffixLen =  myWraps.length;
+
+        if (wrap instanceof MarkWrap && myWraps[0] == wrap)
+        {
+            ourAddWrapDupeCounter.incrementAndGet();
+            int len = suffixLen - 1;
+
+            if (len == 0) return null;
+
+            SyntaxWrap[] combined = new SyntaxWrap[len];
+            System.arraycopy(myWraps, 1, combined, 0, len);
+
+            return new SyntaxWraps(combined);
+        }
+
         int len = 1 + suffixLen;
 
         SyntaxWrap[] combined = new SyntaxWrap[len];
@@ -46,21 +66,48 @@ final class SyntaxWraps
     }
 
 
+    static final AtomicInteger ourAddWrapsCounter = new AtomicInteger();
+    static final AtomicInteger ourAddWrapsPrefixLenCounter = new AtomicInteger();
+    static final AtomicInteger ourAddWrapsDupeCounter = new AtomicInteger();
     /**
      * Prepends a sequence of wraps onto our existing ones.
      * It is assumed that the given list will not be modified later and can
      * therefore be shared.
      */
-    SyntaxWraps addWraps(SyntaxWraps wraps)
+    SyntaxWraps addWraps(SyntaxWraps prefix)
     {
+        ourAddWrapsCounter.incrementAndGet();
+
+        for (boolean set = false; !set; )
+        {
+            int c = ourAddWrapsPrefixLenCounter.get();
+            int v = c + prefix.myWraps.length;
+            set = ourAddWrapsPrefixLenCounter.compareAndSet(c, v);
+        }
+
+
         // TODO this should use a linked-list to avoid copies
-        int prefixLen = wraps.myWraps.length;
-        int suffixLen =  this.myWraps.length;
+        int prefixLen = prefix.myWraps.length;
+        int suffixLen =   this.myWraps.length;
+
+        int suffixStart = 0;
+        while (prefixLen != 0 &&
+               suffixLen != 0 &&
+               prefix.myWraps[prefixLen-1] == myWraps[suffixStart] &&
+               myWraps[suffixStart] instanceof MarkWrap)
+        {
+            // Possible to match TopLevelWraps due to namespace_syntax_introduce
+            ourAddWrapsDupeCounter.incrementAndGet();
+            prefixLen--;
+            suffixLen--;
+            suffixStart++;
+        }
+
         int len = prefixLen + suffixLen;
 
         SyntaxWrap[] combined = new SyntaxWrap[len];
-        System.arraycopy(wraps.myWraps, 0, combined, 0, prefixLen);
-        System.arraycopy(myWraps, 0, combined, prefixLen, suffixLen);
+        System.arraycopy(prefix.myWraps, 0, combined, 0, prefixLen);
+        System.arraycopy(  this.myWraps, suffixStart, combined, prefixLen, suffixLen);
 
         return new SyntaxWraps(combined);
     }
