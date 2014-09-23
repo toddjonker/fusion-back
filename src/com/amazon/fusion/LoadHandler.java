@@ -160,6 +160,7 @@ final class LoadHandler
                                            SyntaxSexp moduleStx)
         throws FusionException
     {
+        // TODO OPTIM very inefficient way to replace the head of a sexp
         SyntaxValue[] children = moduleStx.extract(eval);
 
         // We already verified this type-safety

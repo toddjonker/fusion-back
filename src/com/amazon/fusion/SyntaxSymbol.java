@@ -247,6 +247,7 @@ final class SyntaxSymbol
      */
     Binding uncachedResolveMaybe()
     {
+        // TODO check all call sites to make sure they handle null AND FreeBinding
         if (myBoundId != null) return myBoundId.getBinding();
         if (myWraps   == null) return null;
         return myWraps.resolveMaybe(getName());

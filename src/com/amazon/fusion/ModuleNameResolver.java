@@ -261,6 +261,9 @@ final class ModuleNameResolver
                     boolean reload)
         throws FusionException
     {
+        // TODO I think this could be the wrong when compiling a module
+        //    because currentNamespace isn't the module's namespace.  I think
+        //    we get away with this because there's only one registry.
         ModuleRegistry reg = eval.findCurrentNamespace().getRegistry();
 
         // Ensure that we don't try to load the module twice simultaneously.

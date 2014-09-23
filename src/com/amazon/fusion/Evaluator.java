@@ -617,7 +617,7 @@ class Evaluator
     /**
      * @return not null
      */
-    Object eval(Store store, CompiledForm form)
+    Object eval(Store store, CompiledForm form) // TODO rename to exec
         throws FusionException
     {
         evaluating: while (true)
@@ -655,6 +655,7 @@ class Evaluator
 
                     continue checkingResult;
                 }
+                // TODO OPTIM Remove this, force forms to return non-null.
                 if (result == null)
                 {
                     result = voidValue(this);

@@ -76,6 +76,7 @@ abstract class QuasiBaseForm
 
         SyntaxValue[] children = stx.extract(eval);
 
+        // TODO this should probably use free_identifier_equal
         Binding binding = stx.firstTargetBinding(eval);
         if (myUBinding == binding)
         {

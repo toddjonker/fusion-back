@@ -185,7 +185,7 @@ public class ModuleTest
         throws Exception
     {
         eval("(module m '/fusion' (1))");
-        topLevel().requireModule("m");
+        topLevel().requireModule("m");  // TODO shouldnt be reachable
     }
 
     @Test

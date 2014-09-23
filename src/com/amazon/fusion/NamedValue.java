@@ -8,6 +8,7 @@ import java.io.IOException;
 abstract class NamedValue
     extends BaseValue
 {
+    // TODO Should use BaseSymbol
     private String myName;
 
 

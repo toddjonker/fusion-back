@@ -219,6 +219,7 @@ public final class FusionValue
         return true;
     }
 
+    // TODO copyAnnotations
 
     /**
      * Gets the annotations on a Fusion value as Java strings.

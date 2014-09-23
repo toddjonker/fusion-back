@@ -78,6 +78,7 @@ final class SyntaxWraps
      */
     public Set<MarkWrap> computeMarks()
     {
+        // TODO OPTIM cache the results here
         Set<MarkWrap> marks = null;
 
         for (SyntaxWrap wrap : myWraps)
@@ -88,6 +89,7 @@ final class SyntaxWraps
 
                 if (marks == null)
                 {
+                    // TODO OPTIM could be IdentityHashSet
                     marks = new HashSet<>();
                     marks.add(mark);
                 }

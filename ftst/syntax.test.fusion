@@ -140,6 +140,8 @@
 //==========================================================================
 // syntax_unwrap   aka syntax-e
 
+// TODO use representative data set.
+// but must skip non-empty collections (since unwrap isn't recursive)
 
 (check === true        (syntax_unwrap (quote_syntax true)))
 (check === 159         (syntax_unwrap (quote_syntax 159)))

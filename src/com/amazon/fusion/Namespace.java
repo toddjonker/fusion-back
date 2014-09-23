@@ -28,7 +28,7 @@ import java.util.Set;
  * @see TopLevelNamespace
  * @see ModuleNamespace
  */
-abstract class Namespace
+abstract class Namespace // TODO rename to NamespaceEnv? DynamicNamespace?
     implements Environment, NamespaceStore
 {
     /**
@@ -509,6 +509,7 @@ abstract class Namespace
      */
     final void bind(NsDefinedBinding binding, Object value)
     {
+        // TODO OPTIM inline this method, it's only used once.
         set(binding.myAddress, value);
 
         if (value instanceof NamedValue)

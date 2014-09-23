@@ -34,6 +34,7 @@ final class Syntax
                                     SyntaxValue datum)
         throws FusionException
     {
+        // TODO make this method generic
         if (context != null)
         {
             datum = context.copyWrapsTo(datum);

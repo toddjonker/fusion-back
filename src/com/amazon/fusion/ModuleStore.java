@@ -91,6 +91,7 @@ final class ModuleStore
     @Override
     public Object lookupImport(int moduleAddress, int bindingAddress)
     {
+        // TODO OPTIM Too many hops required here.
         return myRequiredModules[moduleAddress].myValues[bindingAddress];
     }
 

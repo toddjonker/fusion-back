@@ -234,6 +234,7 @@ class Compiler
 
         if (size == 1) return compileExpression(env, stx.get(myEval, from));
 
+        // TODO OPTIM Look for children that are `begin` and splice them.
         CompiledForm[] subforms = compileExpressions(env, stx, from, to);
         return new CompiledBegin(subforms);
     }
@@ -749,6 +750,7 @@ class Compiler
     }
 
 
+    // TODO OPTIM add variants for 0-2(?) args
     private static class CompiledPlainApp
         implements CompiledForm
     {
