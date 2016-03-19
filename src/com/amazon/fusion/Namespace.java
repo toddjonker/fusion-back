@@ -7,6 +7,9 @@ import static com.amazon.fusion.FusionVoid.voidValue;
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
 import com.amazon.fusion.ModuleNamespace.ModuleBinding;
 import com.amazon.fusion.TopLevelNamespace.TopLevelBinding;
+import com.amazon.ion.util.IonTextUtils;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -88,6 +91,13 @@ abstract class Namespace
 
         @Override
         public abstract String toString(); // Force subclasses to implement
+
+        void _dump(PrintStream out) throws IOException
+        {
+            out.print("ident:");
+            myIdentifier.dump(out);
+            out.print(",address:" + myAddress);
+        }
     }
 
     private final ModuleRegistry myRegistry;
@@ -106,7 +116,6 @@ abstract class Namespace
     private final ArrayList<NsBinding> myBindings = new ArrayList<>();
     private final ArrayList<Object>    myValues   = new ArrayList<>();
     private ArrayList<BindingDoc> myBindingDocs;
-
 
     /**
      * @param registry must not be null.
@@ -177,6 +186,12 @@ abstract class Namespace
     final Collection<NsBinding> getBindings()
     {
         return Collections.unmodifiableCollection(myBindings);
+    }
+
+    void _dump(PrintStream out) throws IOException
+    {
+        out.print("module:");
+        IonTextUtils.printString(myModuleId.toString());
     }
 
     //========================================================================

@@ -4,6 +4,9 @@ package com.amazon.fusion;
 
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
 import com.amazon.fusion.ModuleNamespace.ProvidedBinding;
+import com.amazon.ion.util.IonTextUtils;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -58,5 +61,19 @@ class RequireWrap
     {
         String id = myModule.getIdentity().absolutePath();
         return "{{{Required module " + id + "}}}";
+    }
+
+    @Override
+    void dump(PrintStream out) throws IOException
+    {
+        out.print("ModuleRenameWrap::{");
+        _dump(out);
+        out.print("}");
+    }
+
+    void _dump(PrintStream out) throws IOException
+    {
+        out.print("module:");
+        IonTextUtils.printString(out, myModule.getIdentity().toString());
     }
 }

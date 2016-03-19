@@ -3,6 +3,8 @@
 package com.amazon.fusion;
 
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Set;
 
 /**
@@ -37,4 +39,11 @@ interface Environment
      * @return null if the name is not substituted here.
      */
     Binding substituteFree(BaseSymbol name, Set<MarkWrap> marks);
+
+
+    /**
+     * @param out
+     * @throws IOException
+     */
+    abstract void dump(PrintStream out) throws IOException;
 }

@@ -6,6 +6,8 @@ import static com.amazon.fusion.FusionVoid.voidValue;
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
 import com.amazon.fusion.ModuleNamespace.ModuleBinding;
 import com.amazon.fusion.ModuleNamespace.ProvidedBinding;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -156,6 +158,17 @@ final class TopLevelNamespace
                 (myTarget == this ? getIdentifier().debugString() : myTarget) +
                 "}}}";
         }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("TopLevelBinding::{");
+            _dump(out);
+            out.print(",target:");
+            myTarget.dump(out);
+            out.print(",precedence:" + myPrecedence);
+            out.print("}");
+        }
     }
 
 
@@ -253,6 +266,14 @@ final class TopLevelNamespace
         {
             return "{{{TopLevelWrap}}}";
         }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("TopLevelWrap::{");
+            _dump(out);
+            out.print("}");
+        }
     }
 
 
@@ -337,6 +358,15 @@ final class TopLevelNamespace
             return "{{{TopLevelRequireBinding "
                  + target().myModuleId.absolutePath()
                  + ' ' + getName() + "}}}";
+        }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("TopLevelRequireBinding::{target:");
+            myTarget.dump(out);
+            out.print(",precedence:" + myPrecedence);
+            out.print("}");
         }
     }
 
@@ -481,6 +511,15 @@ final class TopLevelNamespace
             }
         }
         return null;
+    }
+
+
+    @Override
+    public void dump(PrintStream out) throws IOException
+    {
+        out.print("TopLevelNamespace::{");
+        _dump(out);
+        out.print("}");
     }
 
 

@@ -6,6 +6,9 @@ import com.amazon.fusion.FusionSymbol.BaseSymbol;
 import com.amazon.fusion.ModuleNamespace.ImportedProvidedBinding;
 import com.amazon.fusion.ModuleNamespace.ModuleBinding;
 import com.amazon.fusion.ModuleNamespace.ProvidedBinding;
+import com.amazon.ion.util.IonTextUtils;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -101,6 +104,14 @@ final class LanguageWrap
             return "{{{LanguageBinding " + myImport.getTargetModule().absolutePath()
                  + ' ' + getName() + "}}}";
         }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("LanguageBinding::{import:");
+            myImport.dump(out);
+            out.print("}");
+        }
     }
 
 
@@ -149,5 +160,13 @@ final class LanguageWrap
     {
         String id = myModule.getIdentity().absolutePath();
         return "{{{Language wrap for " + id + "}}}";
+    }
+
+    @Override
+    void dump(PrintStream out) throws IOException
+    {
+        out.print("LanguageWrap::{module:");
+        IonTextUtils.printString(out, myModule.getIdentity().toString());
+        out.print("}");
     }
 }

@@ -3,6 +3,8 @@
 package com.amazon.fusion;
 
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
@@ -57,5 +59,17 @@ class SequenceWrap
     public String toString()
     {
         return "{{{Sequence wrap: " + Arrays.toString(myWraps) + "}}}";
+    }
+
+    @Override
+    void dump(PrintStream out) throws IOException
+    {
+        out.print("SequenceWrap::[");
+        for (SyntaxWrap wrap : myWraps)
+        {
+            wrap.dump(out);
+            out.print(",");
+        }
+        out.print("]");
     }
 }

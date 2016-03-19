@@ -2,7 +2,9 @@
 
 package com.amazon.fusion;
 
+import java.io.PrintStream;
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -12,6 +14,9 @@ import java.util.Set;
  */
 abstract class SyntaxWrap
 {
+    abstract void dump(PrintStream out) throws IOException;
+
+
     /**
      * @param returnMarks <em>returns</em> the marks from this wrap and those
      * deeper. Must be mutable and not null.

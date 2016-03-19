@@ -5,6 +5,9 @@ package com.amazon.fusion;
 import static com.amazon.fusion.FusionVoid.voidValue;
 import static com.amazon.ion.util.IonTextUtils.printQuotedSymbol;
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
+import com.amazon.ion.util.IonTextUtils;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Set;
 
 final class LocalEnvironment
@@ -120,6 +123,18 @@ final class LocalEnvironment
                 }
                 return names;
             }
+        }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("LocalBinding::");
+            IonTextUtils.printSymbol(out, myIdentifier.debugString());
+            out.print("::{identifier:");
+            myIdentifier.dump(out);
+            out.print(",depth:" + myDepth);
+            out.print(",address:" + myAddress);
+            out.print("}");
         }
     }
 
@@ -254,6 +269,22 @@ final class LocalEnvironment
         }
         buf.append(")}}}");
         return buf.toString();
+    }
+
+
+    @Override
+    public void dump(PrintStream out) throws IOException
+    {
+        out.print("LocalEnvironment::{id:");
+        out.print(System.identityHashCode(this));
+        out.print(",depth:" + myDepth);
+        out.print(",myBindings:[");
+        for (LocalBinding b : myBindings)
+        {
+            b.dump(out);
+            out.print(",");
+        }
+        out.print("]}");
     }
 
 

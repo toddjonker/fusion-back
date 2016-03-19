@@ -15,8 +15,11 @@ import com.amazon.ion.IonWriter;
 import com.amazon.ion.ValueFactory;
 import com.amazon.ion.util.IonTextUtils;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 
@@ -68,6 +71,29 @@ final class FusionSymbol
                 ourActualSymbols.put(sym, ref);
 
                 return sym;
+            }
+        }
+
+        static void dumpInternMap(PrintStream out) throws IOException
+        {
+            synchronized (ourActualSymbols)
+            {
+                out.print("{");
+                Set<Map.Entry<ActualSymbol, WeakReference<ActualSymbol>>> entries =
+                    ourActualSymbols.entrySet();
+                for (Map.Entry<ActualSymbol, WeakReference<ActualSymbol>> entry : entries)
+                {
+                    ActualSymbol sym = entry.getKey();
+
+                    IonTextUtils.printSymbol(out, sym.stringValue());
+                    out.print(":{key_addr:");
+                    out.print(System.identityHashCode(sym));
+
+                    out.print(",sym:");
+                    sym.dump(out);
+                    out.print("},");
+                }
+                out.print("}");
             }
         }
 
@@ -179,6 +205,9 @@ final class FusionSymbol
             }
             return SyntaxSymbol.make(eval, loc, this);
         }
+
+        /** Dumps this symbol's lexical context. */
+        abstract void dump(PrintStream out) throws IOException;
     }
 
 
@@ -251,6 +280,12 @@ final class FusionSymbol
         {
             out.append("null.symbol");
         }
+
+        @Override
+        void dump(PrintStream out)
+        {
+            out.print("null.symbol");
+        }
     }
 
 
@@ -322,6 +357,16 @@ final class FusionSymbol
             throws IOException, FusionException
         {
             out.append(myContent);
+        }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("ActualSymbol::{content:");
+            IonTextUtils.printString(out, myContent);
+            out.print(",content_addr:");
+            out.print(System.identityHashCode(myContent));
+            out.print("}");
         }
     }
 
@@ -433,6 +478,13 @@ final class FusionSymbol
         {
             writeAnnotations(out, myAnnotations);
             myValue.write(eval, out);
+        }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("AnnotatedSymbol::");
+            myValue.dump(out);
         }
     }
 

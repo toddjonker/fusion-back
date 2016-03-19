@@ -3,6 +3,8 @@
 package com.amazon.fusion;
 
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -58,5 +60,19 @@ class EnvironmentWrap
     public String toString()
     {
         return "{{{Environment renames for " + myEnvironment + "}}}";
+    }
+
+    @Override
+    void dump(PrintStream out) throws IOException
+    {
+        out.print("EnvironmentRenameWrap::{");
+        _dump(out);
+        out.print("}");
+    }
+
+    void _dump(PrintStream out) throws IOException
+    {
+        out.print("env:");
+        myEnvironment.dump(out);
     }
 }

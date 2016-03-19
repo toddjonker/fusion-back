@@ -3,6 +3,8 @@
 package com.amazon.fusion;
 
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
+import java.io.IOException;
+import java.io.PrintStream;
 
 
 final class FreeBinding
@@ -101,5 +103,13 @@ final class FreeBinding
     public String toString()
     {
         return "{{FreeBinding " + myName + "}}";
+    }
+
+    @Override
+    void dump(PrintStream out) throws IOException
+    {
+        out.print("FreeBinding::{name:");
+        myName.dump(out);
+        out.print("}");
     }
 }

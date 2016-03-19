@@ -6,6 +6,8 @@ import static com.amazon.fusion.FusionBool.makeBool;
 import static com.amazon.fusion.FusionSymbol.makeSymbol;
 import static com.amazon.fusion.FusionUtils.EMPTY_OBJECT_ARRAY;
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Set;
 
@@ -459,6 +461,15 @@ final class SyntaxSymbol
             base = buf.toString();
         }
         return base;
+    }
+
+    void dump(PrintStream out) throws IOException
+    {
+        out.print("SyntaxSymbol::{binding:");
+        myBinding.dump(out);
+        out.print(",wraps:");
+        myWraps.dump(out);
+        out.print("}");
     }
 
 

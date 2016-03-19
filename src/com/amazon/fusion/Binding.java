@@ -4,6 +4,8 @@ package com.amazon.fusion;
 
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
 import com.amazon.fusion.ModuleNamespace.ProvidedBinding;
+import java.io.IOException;
+import java.io.PrintStream;
 
 /**
  * Bindings are used during expansion and compilation to identify a specific
@@ -12,6 +14,9 @@ import com.amazon.fusion.ModuleNamespace.ProvidedBinding;
  */
 abstract class Binding
 {
+    /** Dumps the lexical context. For debugging only. */
+    abstract void dump(PrintStream out) throws IOException;
+
     abstract BaseSymbol getName();
 
     /**

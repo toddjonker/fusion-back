@@ -1,8 +1,10 @@
-// Copyright (c) 2012-2015 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2016 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,5 +62,11 @@ class MarkWrap
     public String toString()
     {
         return "{{{Mark " + myMark + "}}}";
+    }
+
+    @Override
+    void dump(PrintStream out) throws IOException
+    {
+        out.print(myMark);
     }
 }

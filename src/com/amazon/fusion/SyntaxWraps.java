@@ -3,6 +3,8 @@
 package com.amazon.fusion;
 
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -139,6 +141,21 @@ final class SyntaxWraps
 
         return null;
     }
+
+    void dump(PrintStream out) throws IOException
+    {
+        out.print("[");
+        for (SyntaxWrap wrap : myWraps)
+        {
+            wrap.dump(out);
+            out.print(",");
+        }
+        out.print("]");
+    }
+
+
+    //========================================================================
+
 
     private static final class SplicingIterator
         implements Iterator<SyntaxWrap>

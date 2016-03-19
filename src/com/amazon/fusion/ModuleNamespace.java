@@ -6,6 +6,9 @@ import com.amazon.fusion.FusionSymbol.BaseSymbol;
 import com.amazon.fusion.LanguageWrap.LanguageBinding;
 import com.amazon.fusion.TopLevelNamespace.TopLevelBinding;
 import com.amazon.fusion.TopLevelNamespace.TopLevelRequireBinding;
+import com.amazon.ion.util.IonTextUtils;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -112,6 +115,16 @@ final class ModuleNamespace
             return "{{{DefinedProvidedBinding " + getName()
                 + " -> "  + myDefinition + "}}}";
         }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("DefinedProvidedBinding::{id:");
+            getIdentifier().dump(out);
+            out.print(",target:");
+            target().dump(out);
+            out.print("}");
+        }
     }
 
     /**
@@ -145,6 +158,16 @@ final class ModuleNamespace
         {
             return "{{{ImportedProvidedBinding " + getName()
                 + " -> "  + myImport + "}}}";
+        }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("ImportedProvidedBinding::{id:");
+            getIdentifier().dump(out);
+            out.print(",target:");
+            target().dump(out);
+            out.print("}");
         }
     }
 
@@ -266,6 +289,16 @@ final class ModuleNamespace
             return "{{{ModuleBinding " + myModuleId.absolutePath()
                 + ' ' + getIdentifier().debugString() + "}}}";
         }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("ModuleBinding::{moduleId:");
+            IonTextUtils.printString(out, myModuleId.toString());
+            out.print(",");
+            _dump(out);
+            out.print("}");
+        }
     }
 
 
@@ -296,6 +329,13 @@ final class ModuleNamespace
             ModuleIdentity id =
                 ((ModuleNamespace) getEnvironment()).getModuleId();
             return "{{{ModuleWrap " + id.absolutePath() + "}}}";
+        }
+
+        @Override
+        void dump(PrintStream out) throws IOException
+        {
+            out.print("ModuleWrap::");
+            super.dump(out);
         }
     }
 
@@ -368,6 +408,14 @@ final class ModuleNamespace
              new SequenceWrap(new LanguageWrap(language)));
     }
 
+
+    @Override
+    public void dump(PrintStream out) throws IOException
+    {
+        out.print("ModuleNamespace::{");
+        _dump(out);
+        out.print("}");
+    }
 
     @Override
     NsBinding newDefinedBinding(SyntaxSymbol identifier, int address)
