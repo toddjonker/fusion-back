@@ -1,0 +1,56 @@
+// Copyright (c) 2015-2022 Amazon.com, Inc.  All rights reserved.
+
+(module macro_defines "/fusion"
+
+  (require
+    "/fusion/experimental/syntax"
+    "/fusion/unsafe/sexp")
+
+
+
+  (define ctx  // PRIVATE!
+    "Lexical context for expanded macros."
+    (quote_syntax context))
+
+
+  (provide define_macro_introduced_name)
+  (define_syntax define_macro_introduced_name
+    '''
+Like define, but the name's lexical context is replaced.
+    '''
+    (lambda (stx)
+      (let_values [((content) (unsafe_pair_tail (syntax_unwrap stx)))]
+        (if (not (and (is_pair content) (is_pair (unsafe_pair_tail content))))
+          (wrong_syntax stx "expected name and body")
+          (let_values [((name) (syntax_unwrap (unsafe_pair_head content))),
+                       ((content_tail) (unsafe_pair_tail content))]
+            (datum_to_syntax
+              (pair (quote define) (pair name content_tail))
+              ctx
+              stx))))))
+
+
+  (provide defpub_macro_introduced_name)
+  (define_syntax defpub_macro_introduced_name
+    '''
+Like define, but the name's lexical context is replaced.
+    '''
+    (lambda (stx)
+      (lets [(content  (tail (syntax_unwrap stx))),
+             (name_sym (syntax_unwrap (head content))),
+             (value    (head (tail content))),
+             (name_id  (datum_to_syntax name_sym ctx))]
+        (quasisyntax
+          (begin
+            (define (unsyntax name_id) (unsyntax value))
+
+            // This reference is working because it expands-to #%top
+            // which hacks around the issue. I think that's wrong,
+            // this should resolve normally.
+
+            // TODO compare Racket's expansion to Fusion's.
+            (unsyntax name_id)
+
+            (provide (unsyntax name_id)))))))
+
+)

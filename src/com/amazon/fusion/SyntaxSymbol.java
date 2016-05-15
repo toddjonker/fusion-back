@@ -323,7 +323,7 @@ final class SyntaxSymbol
                 BaseSymbol topSym = makeSymbol(eval, "#%top");
                 SyntaxSymbol top =
                     new SyntaxSymbol(eval,
-                                     myWraps,
+                                     myWraps, // FIXME wrong lex ctx?!?
                                      /*location*/ null,
                                      /*properties*/ EMPTY_OBJECT_ARRAY,
                                      topSym);

@@ -100,6 +100,9 @@ final class ProvideForm
         // It doesn't work when the ns isn't in context because the
         // provided binding was macro-introduced.
 
+        // FIXME should this work like #%top ?
+        //  I don't think so.
+
         Binding b = identifier.resolve();
         // Binding local = moduleNamespace.localResolve(identifier);
         // localResolve isn't right either since it doesn't find imports

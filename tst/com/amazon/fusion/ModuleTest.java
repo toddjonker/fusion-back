@@ -26,6 +26,21 @@ public class ModuleTest
     }
 
     @Test
+    public void testBadProvide()
+        throws Exception
+    {
+        topLevel().requireModule("/macro_defines");
+
+        String modbod =
+               "(module MULT \"/fusion\"\n" +
+               "  (require \"/macro_defines\")\n" +
+               "  (defpub_macro_introduced_name multiple 105)\n" +
+               ")";
+        eval(modbod);
+    }
+
+
+    @Test
     public void testBadModuleSyntax()
         throws Exception
     {

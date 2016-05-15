@@ -36,6 +36,23 @@
 (define (proc arg) "doc" 546 arg)
 (check === 547 (proc 547))
 
+// Ensure we can handle multiple top-level bindings with the same name but
+// different marks.
+(require "/macro_defines")
+
+(define multiple true)
+(define_macro_introduced_name multiple 1233)
+(check_true multiple)
+
+(module MULT "/fusion"
+  (require "/macro_defines")
+  (defpub_macro_introduced_name multiple 105)
+  // FIXME FAILS since provide can't find multiple.  Seems to have the wrong wraps.
+)
+(require MULT)
+(check_true multiple)
+
+
 // Duplicate bound names
 (expect_syntax_exn
   (define (bad x x) true))
