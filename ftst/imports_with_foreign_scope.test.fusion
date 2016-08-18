@@ -1,0 +1,25 @@
+(require "/fusion/experimental/syntax")
+
+(module M "/fusion"
+  (define one 1)
+  (define ten 10)
+  (provide one ten))
+
+(define_syntax boom
+  (lambda (stx)
+    (datum_to_syntax
+      (quasisyntax
+        (begin
+          (unsyntax
+            (let ((dual "first"))
+              (quote_syntax
+                (require (only_in M
+                                  (one dual))))))
+          (unsyntax
+            (let ((dual "second"))
+              (quote_syntax
+                (require (only_in M
+                                  (ten dual))))))))
+      (quote_syntax context))))
+
+(boom)
