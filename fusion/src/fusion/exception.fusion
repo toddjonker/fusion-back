@@ -198,11 +198,41 @@ Returns `true` or `false`.
           stx))))
 
   (generate_predicate is_error_exn      error_exn      "com.amazon.fusion.FusionErrorException")
-  (generate_predicate is_argument_error argument_error "com.amazon.fusion.ArgumentException")
   (generate_predicate is_arity_error    arity_error    "com.amazon.fusion.ArityFailure")
   (generate_predicate is_contract_error contract_error "com.amazon.fusion.ContractException")
   (generate_predicate is_result_error   result_error   "com.amazon.fusion.ResultFailure")
   (generate_predicate is_syntax_error   syntax_error   "com.amazon.fusion.SyntaxException")
   (generate_predicate is_unbound_error  unbound_error  "com.amazon.fusion.UnboundIdentifierException")
+
+
+  (define_syntax generate_predicate_NEW
+    (let [(ctx (quote_syntax here)),
+          (docs "A predicate for use with `with_handlers`. Does NOT work outside of a `with_handlers` form.")]
+      (lambda (stx)
+        (lets
+          [(orig_args (syntax_subseq stx 1)),
+           (pred_name_id (syntax_get orig_args 0)),
+           (exn_name_id  (syntax_get orig_args 0)),
+           (exn_class_id (syntax_get orig_args 1)),
+           (docs (string_append
+                   "Determines whether a value is an exception of type `"
+                   (syntax_unwrap exn_name_id)
+                   "`. Returns `true` or `false`."))]
+          (datum_to_syntax
+            (sexp (quote_syntax begin)                            // (begin
+              (quasisyntax
+                (define (unsyntax exn_class_id)                  //    (define CLASS
+                 (java_class (unsyntax exn_class_id))))          //      (java_class CLASS))
+              (sexp (quote_syntax provide) pred_name_id)          //   (provide NAME)
+              (sexp (quote_syntax define) pred_name_id            //   (define NAME
+                docs                                              //     docs
+                (quasisyntax
+                  (lambda (e)                                       //       (lambda (e)
+                    (java_instance_of (unsyntax exn_class_id) e)))))                //         (java_instance_of CLASS e))))
+            ctx
+            stx)))))
+
+  // RUNTIME BREAKER!  java.lang.AssertionError: No value for namespace address 12
+  (generate_predicate_NEW is_argument_error argument_error 'com.amazon.fusion.ArgumentException')
 
 )
