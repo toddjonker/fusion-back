@@ -14,19 +14,16 @@ public final class FusionAssertionException
 
     /**
      * @param message may be null.
-     * @param location may be null.
+     * @param expression must not be null.
      * @param result must not be null.
      */
     FusionAssertionException(String message,
-                             SourceLocation location,
                              String expression,
                              Object result)
     {
         super(message);
         myExpression = expression;
         myResult = result;
-
-        addContext(location);
     }
 
     /**

@@ -45,6 +45,7 @@ with handlers.
     "/fusion/equality"
     "/fusion/experimental/syntax"
     "/fusion/ffi/java"
+    "/fusion/io"
     "/fusion/private/bind"
     "/fusion/private/builtins"
     "/fusion/private/compare"
@@ -53,6 +54,7 @@ with handlers.
     "/fusion/private/raise"
     "/fusion/private/sexp"
     "/fusion/string"
+    "/fusion/unsafe/sexp"
   )
 
   (provide // from /fusion/private/raise
@@ -204,5 +206,65 @@ Returns `true` or `false`.
   (generate_predicate is_result_error   result_error   "com.amazon.fusion.ResultFailure")
   (generate_predicate is_syntax_error   syntax_error   "com.amazon.fusion.SyntaxException")
   (generate_predicate is_unbound_error  unbound_error  "com.amazon.fusion.UnboundIdentifierException")
+
+
+  //===========================================================================
+  // assert
+
+  (define ctx  // PRIVATE!
+    "Lexical context for macros."
+    (quote_syntax context))
+
+
+  (provide assert)
+  (define_syntax assert
+    '''
+    (assert expr message ...)
+
+Evaluates the `expr`, throwing an exception if the result isn't truthy.
+The exception `display`s the `message`s, which are only evaluated on failure.
+    '''
+    (lambda (stx)
+      (let [(operands (unsafe_pair_tail (syntax_unwrap stx)))]
+        (unless (is_pair operands)
+          (wrong_syntax stx "expecting expression"))
+        (lets [(expr        (head operands)),
+               (expr_str    (ionize_to_string (syntax_unwrap expr))),
+               (messages    (tail operands)),
+               (message_stx (if (is_pair messages)
+                              (pair (quote safe_display_to_string) messages)
+                              null.string))]
+
+          // Building the application of raise_assert_error in the macro,
+          // without a location, prevents that call from appearing in the
+          // resulting stack trace.
+
+          (datum_to_syntax
+            (quasiquote
+              (let [(result (unquote expr))]
+                (unless result
+                  (unquote
+                    (sexp (quote raise_assert_error)  // (raise_assert_error
+                          expr_str                    //   "expr"
+                          (quote result)              //   result
+                          message_stx)))))            //   message)
+            ctx
+            stx)))))
+
+
+  (define raise_assert_error   // DO NOT PROVIDE!  Not a good API.
+    '''
+    (raise_assert_error expr_string result message)
+    '''
+    (java_new "com.amazon.fusion.RaiseAssertErrorProc"))
+
+
+  (define safe_display_to_string
+    (lambda args
+      (with_handlers
+        [(is_error_exn (lambda (e) "(Unable to render the message)"))]
+        (apply display_to_string args))))
+
+//Then FusionAssertionException adds additional stuff to the message.
 
 )

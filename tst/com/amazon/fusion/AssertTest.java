@@ -1,14 +1,22 @@
-// Copyright (c) 2012-2014 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2018 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import static org.hamcrest.Matchers.endsWith;
 
 public class AssertTest
     extends CoreTestCase
 {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+
     @Before
     public void requires()
         throws Exception
@@ -89,6 +97,17 @@ public class AssertTest
         throws Exception
     {
         eval("(assert true (exit))");
+    }
+
+    @Test
+    public void testAssertFailureLocation()
+        throws Exception
+    {
+        thrown.expect(FusionAssertionException.class);
+        thrown.expectMessage(endsWith("  ...at 2nd line, 3rd column\n" +
+                                      "  ...at 1st line, 1st column"));
+        eval("(begin \n" +
+             "  (assert (not true) \"msg\"))");
     }
 
     @Test
