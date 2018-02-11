@@ -42,8 +42,10 @@
 
 (define top 17110)
 
-(check == (eval (quote_syntax (+ top 2)) ns) 17222)
-(check == (eval (sexp (quote +) (quote_syntax top) 2) ns) 17222)
+(expect_syntax_error
+  (eval (quote_syntax top 2) ns))
+(expect_syntax_error
+ (eval (sexp (quote +) (quote_syntax top) 2) ns))
 
 
 

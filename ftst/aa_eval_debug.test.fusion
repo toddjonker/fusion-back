@@ -1,0 +1,72 @@
+(require
+  "/fusion/eval"
+  "/fusion/exception"
+  "/fusion/experimental/check"
+  "/fusion/experimental/syntax"
+  "/fusion/namespace")
+
+(displayln "Test namespace: " (current_namespace))
+
+// Make sure + is bound in this namespace
+(displayln "+: " +)
+//(displayln "(#%top +): " ('#%top' +))  // FIXME this is broken, not finding +
+
+(displayln "\n--------\nBase check")
+(expect_check_error (expect_syntax_error (+ 1 "a")))
+
+(define_syntax eval_internal_expr
+  (|stx|
+//    (datum_to_syntax
+      (quote_syntax (eval (quote_syntax (+ 1 "a"))))
+  //    (quote_syntax context)
+    //  stx)))
+))
+(displayln "\n--------\nRunning eval_internal_expr")
+//(eval_internal_expr)
+
+(displayln "\n--------\nCheck with eval_internal_expr")
+(expect_check_error (expect_syntax_error (eval_internal_expr)))
+
+
+(define_syntax eval_external_expr
+  (|stx|
+    (lets [(actuals  (tail (syntax_unwrap stx))),
+           (top_form (head actuals))]
+      (datum_to_syntax
+        (begin //sexp (quote_syntax _expect_syntax_exn)
+          (sexp (quote_syntax eval)
+            (sexp (quote_syntax quote_syntax) top_form)))
+        (quote_syntax context)
+        stx))))
+
+(displayln "\n--------\nCheck with eval_external_expr")
+(expect_check_error (expect_syntax_error (eval_external_expr (+ 1 "a"))))
+
+
+(define_syntax macro0
+  (|stx|
+    (quote_syntax
+      (+ 1 "a"))))
+(displayln "\n--------\nRunning macro0")
+(expect_argument_error (macro0))
+
+
+(define_syntax macro1
+  (|stx|
+    (quasisyntax
+      (expect_syntax_error (unsyntax (head (tail (syntax_unwrap stx))))))))
+
+(displayln "\n--------\nCheck with macro1")
+(expect_check_error (macro1 (+ 1 "a")))
+
+
+(define_syntax macro2
+  (|stx|
+    (quote_syntax
+      (expect_syntax_error (+ 1 "a")))))
+
+(displayln "\n--------\nRunning macro2")
+//(macro2)
+
+(displayln "\n--------\nCheck with macro2")
+(expect_check_error (macro2))

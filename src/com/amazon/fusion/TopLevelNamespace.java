@@ -100,7 +100,8 @@ final class TopLevelNamespace
             if (moreWraps.hasNext())
             {
                 SyntaxWrap nextWrap = moreWraps.next();
-                nextWrap.resolve(name, moreWraps, returnMarks);
+                Binding b = nextWrap.resolve(name, moreWraps, returnMarks);
+                if (b instanceof NsBinding) return b;
             }
 
             return getEnvironment().substituteFree(name, returnMarks);

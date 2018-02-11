@@ -470,7 +470,14 @@ order:
 
   (define (_expect_raise pred expected thunk)
     (let [(meta (with_handlers
-                  [(pred void), // If predicate matches, handler returns void.
+                  [(pred
+                    (|e| (displayln "ER caught as expected: " e)
+                         (void))), // If predicate matches, handler returns void.
+                   //-
+                   ((|e| (displayln "ER caught unexpected: " e)
+                         false)
+                    identity),
+                   //-
                    ((|e| true)  // For anything else, describe what was raised.
                     (|e| { actual: (describe_raised e) }))]
                   (thunk)
@@ -573,6 +580,8 @@ another kind of exception is thrown, then the check fails.''')))]
   // NOT PUBLIC! Only used by the public version below.
   (define_exn_check _expect_syntax_exn  is_syntax_error   false /*skip frame*/)
 
+(require "/fusion/namespace")
+
   (defpub_syntax expect_syntax_error
     '''
     (expect_syntax_error top_form [message])
@@ -614,6 +623,7 @@ but do this instead:
               (quote_syntax parameterize)
               [(sexp (quote_syntax check_stack_param)
                      (sexp (quote_syntax quote) meta))]
+              (quote_syntax (displayln "ESE namespace:" (current_namespace)))
               (apply sexp
                 (quote_syntax _expect_syntax_exn)
                 (sexp (quote_syntax eval)

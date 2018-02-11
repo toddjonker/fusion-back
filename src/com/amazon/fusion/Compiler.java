@@ -515,8 +515,14 @@ class Compiler
             @Override
             Object visit(TopLevelDefinedBinding b) throws FusionException
             {
-                assert b.isOwnedBy(env.namespace());
-                return new CompiledTopVariableReference(b.myAddress);
+                if (b.isOwnedBy(env.namespace()))
+                {
+                    return new CompiledTopVariableReference(b.myAddress);
+                }
+
+                String message =
+                    "Namespace mismatch. Cannot access top-level binding from another namespace.";
+                throw new SyntaxException(null, message, identifier);
             }
 
             @Override
