@@ -1,0 +1,16 @@
+(module experimental_list "/fusion"
+
+  (require "/fusion/ffi/java")
+  (provide list_sort)
+
+  (define list_sort
+      '''
+      (list_sort l comparator)
+
+Sorts a list using the given comparator function. The comparator fuction must
+accept two values and produce an int result where 0 means they are equal,
+a result less than zero means the first value is less than the second, and a
+result greater than zero means that the first value is greater than the second.
+    '''
+    (java_new "com.amazon.fusion.ComparatorSortProc"))
+)
