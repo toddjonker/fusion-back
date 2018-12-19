@@ -821,7 +821,7 @@ final class FusionTimestamp
                 return voidValue(eval);
             }
 
-            int seconds = input.getSecond();
+            int seconds = input.getSecond();  // FIXME should be decimal seconds
 
             return makeInt(eval, seconds);
         }
