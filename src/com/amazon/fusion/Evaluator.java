@@ -43,7 +43,7 @@ import java.util.Map;
 class Evaluator
 {
     private final GlobalState myGlobalState;
-    private final IonSystem mySystem;
+    private final IonSystem mySystem;  // TODO remove?
     private final Evaluator myOuterFrame;
     private final Map<Object, Object> myContinuationMarks;
 

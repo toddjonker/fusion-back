@@ -631,7 +631,7 @@ public final class FusionIo
             throws FusionException
         {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            try (IonWriter writer = eval.getSystem().newBinaryWriter(buffer))
+            try (IonWriter writer = eval.getSystem().newBinaryWriter(buffer)) // TODO go to GlobalState
             {
                 FusionIo.ionize(eval, writer, arg);
                 writer.finish();
