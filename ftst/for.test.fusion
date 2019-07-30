@@ -234,15 +234,12 @@
 (expect_syntax_exn (fors (1 2)     13))
 
 // For-clause is a list not a sexp
-// TODO split_binding allows this, but it's not tested nor used in this library.
-(when false
 (expect_syntax_exn (for  ([a, []]       ) 13))
 (expect_syntax_exn (fors ([a, []]       ) 13))
 (expect_syntax_exn (for  ([a, []] (b  2)) 13))
 (expect_syntax_exn (fors ([a, []] (b  2)) 13))
 (expect_syntax_exn (for  ((a  []) [b, 2]) 13))
 (expect_syntax_exn (fors ((a  []) [b, 2]) 13))
-)
 
 // For-clause doesn't start with an identifier (or sexp; see below)
 (expect_syntax_exn (for  (null.sexp) 13))

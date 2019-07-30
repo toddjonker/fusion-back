@@ -74,7 +74,7 @@ Checks the syntax of a binding initializer form `(ids expr)`; returns
 
 `(check_ids stx ids)` must raise syntax_error if the `ids` are malformed.
     '''
-    (if (not (if (is_seq (syntax_unwrap binding))
+    (if (not (if (is_sexp (syntax_unwrap binding))  // Should we really allow a list here?
                (= 2 (syntax_size binding))
                false))
       (wrong_syntax stx "bad binding form: " binding)
