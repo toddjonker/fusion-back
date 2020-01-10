@@ -1,8 +1,9 @@
-// Copyright (c) 2012-2017 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2020 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
 import static com.amazon.fusion.FusionStruct.immutableStruct;
+import static com.amazon.fusion.SyntaxWraps.EMPTY_WRAPS;
 import com.amazon.fusion.FusionStruct.ImmutableStruct;
 import com.amazon.fusion.FusionStruct.NonNullImmutableStruct;
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
@@ -45,7 +46,7 @@ final class SyntaxStruct
                                      SourceLocation  loc,
                                      ImmutableStruct struct)
     {
-        return new SyntaxStruct(loc, ORIGINAL_STX_PROPS, null, struct);
+        return new SyntaxStruct(loc, ORIGINAL_STX_PROPS, EMPTY_WRAPS, struct);
     }
 
 
@@ -148,7 +149,7 @@ final class SyntaxStruct
         BaseSymbol[] annotations = myStruct.getAnnotations();
         int size = myStruct.size();
         ImmutableStruct s = immutableStruct(newMap, annotations, size);
-        return new SyntaxStruct(getLocation(), getProperties(), null, s);
+        return new SyntaxStruct(getLocation(), getProperties(), EMPTY_WRAPS, s);
     }
 
 
@@ -166,7 +167,7 @@ final class SyntaxStruct
     Object unwrap(Evaluator eval)
         throws FusionException
     {
-        if (myWraps == null)
+        if (myWraps == EMPTY_WRAPS)
         {
             return myStruct;
         }
@@ -209,7 +210,7 @@ final class SyntaxStruct
         BaseSymbol[] annotations = myStruct.getAnnotations();
         int size = myStruct.size();
         myStruct = immutableStruct(newMap, annotations, size);
-        myWraps = null;
+        myWraps = EMPTY_WRAPS;
 
         return myStruct;
     }

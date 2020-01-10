@@ -6,8 +6,8 @@ import static com.amazon.fusion.FusionBool.makeBool;
 import static com.amazon.fusion.FusionSymbol.makeSymbol;
 import static com.amazon.fusion.FusionSyntax.checkIdentifierArg;
 import static com.amazon.fusion.FusionUtils.EMPTY_OBJECT_ARRAY;
+import static com.amazon.fusion.SyntaxWraps.EMPTY_WRAPS;
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
-import java.util.Collections;
 import java.util.Set;
 
 final class SyntaxSymbol
@@ -38,9 +38,11 @@ final class SyntaxSymbol
     /** Initialized during {@link #doExpand} */
     private BoundIdentifier myBoundId;
 
-    private final SyntaxWraps myWraps;   // TODO make non-null to streamline logic.
+    /** Not null. */
+    private final SyntaxWraps myWraps;
 
     /**
+     * @param wraps must not be null.
      * @param datum must not be null.
      */
     private SyntaxSymbol(Evaluator      eval,
@@ -50,6 +52,8 @@ final class SyntaxSymbol
                          BaseSymbol     datum)
     {
         super(loc, properties, datum);
+
+        assert wraps != null;
         myWraps = wraps;
     }
 
@@ -59,14 +63,14 @@ final class SyntaxSymbol
                                      SourceLocation loc,
                                      BaseSymbol     symbol)
     {
-        return new SyntaxSymbol(eval, null, loc, ORIGINAL_STX_PROPS, symbol);
+        return new SyntaxSymbol(eval, EMPTY_WRAPS, loc, ORIGINAL_STX_PROPS, symbol);
     }
 
     static SyntaxSymbol make(Evaluator      eval,
                              SourceLocation loc,
                              BaseSymbol     symbol)
     {
-        return new SyntaxSymbol(eval, null, loc, EMPTY_OBJECT_ARRAY, symbol);
+        return new SyntaxSymbol(eval, EMPTY_WRAPS, loc, EMPTY_OBJECT_ARRAY, symbol);
     }
 
 
@@ -96,7 +100,7 @@ final class SyntaxSymbol
     static SyntaxSymbol make(Evaluator eval, String value)
     {
         BaseSymbol datum = makeSymbol(eval, value);
-        return new SyntaxSymbol(eval, null, null, EMPTY_OBJECT_ARRAY, datum);
+        return new SyntaxSymbol(eval, EMPTY_WRAPS, null, EMPTY_OBJECT_ARRAY, datum);
     }
 
 
@@ -124,7 +128,7 @@ final class SyntaxSymbol
 
 
     /**
-     * @param wraps may be null.
+     * @param wraps must not be null.
      */
     private SyntaxSymbol copyReplacingWraps(SyntaxWraps wraps)
     {
@@ -158,30 +162,14 @@ final class SyntaxSymbol
     @Override
     SyntaxSymbol addWrap(SyntaxWrap wrap)
     {
-        SyntaxWraps newWraps;
-        if (myWraps == null)
-        {
-            newWraps = SyntaxWraps.make(wrap);
-        }
-        else
-        {
-            newWraps = myWraps.addWrap(wrap);
-        }
+        SyntaxWraps newWraps = myWraps.addWrap(wrap);
         return copyReplacingWraps(newWraps);
     }
 
     @Override
     SyntaxSymbol addWraps(SyntaxWraps wraps)
     {
-        SyntaxWraps newWraps;
-        if (myWraps == null)
-        {
-            newWraps = wraps;
-        }
-        else
-        {
-            newWraps = myWraps.addWraps(wraps);
-        }
+        SyntaxWraps newWraps = myWraps.addWraps(wraps);
         return copyReplacingWraps(newWraps);
     }
 
@@ -189,8 +177,8 @@ final class SyntaxSymbol
     @Override
     SyntaxSymbol stripWraps(Evaluator eval)
     {
-        if (myWraps == null) return this;
-        return copyReplacingWraps(null);
+        if (myWraps == EMPTY_WRAPS) return this;
+        return copyReplacingWraps(EMPTY_WRAPS);
     }
 
     /**
@@ -201,7 +189,7 @@ final class SyntaxSymbol
     SyntaxValue copyWrapsTo(SyntaxValue source)
         throws FusionException
     {
-        if (myWraps == null) return source;
+        if (myWraps == EMPTY_WRAPS) return source;
         return source.addWraps(myWraps);
     }
 
@@ -210,7 +198,6 @@ final class SyntaxSymbol
      */
     Set<MarkWrap> computeMarks()
     {
-        if (myWraps == null) return Collections.emptySet();
         return myWraps.computeMarks();
     }
 
@@ -219,7 +206,7 @@ final class SyntaxSymbol
     boolean hasMarks(Evaluator eval)
     {
         if (myBoundId != null) return myBoundId.hasMarks();
-        return (myWraps == null ? false : myWraps.hasMarks(eval));
+        return myWraps.hasMarks(eval);
     }
 
 
@@ -239,12 +226,7 @@ final class SyntaxSymbol
     BoundIdentifier uncachedResolveBoundIdentifier()
     {
         if (myBoundId != null) return myBoundId;
-        if (myWraps != null)
-        {
-            return myWraps.resolveBoundIdentifier(getName());
-        }
-        return new BoundIdentifier(new FreeBinding(getName()),
-                                   Collections.<MarkWrap>emptySet());
+        return myWraps.resolveBoundIdentifier(getName());
     }
 
     /**
@@ -298,7 +280,6 @@ final class SyntaxSymbol
     Binding uncachedResolveMaybe()
     {
         if (myBoundId != null) return myBoundId.getBinding();
-        if (myWraps   == null) return null;
         return myWraps.resolveMaybe(getName());
     }
 
@@ -309,11 +290,8 @@ final class SyntaxSymbol
      */
     SyntaxSymbol copyAndResolveTop()
     {
-        Binding b = null;
-        if (myWraps != null)
-        {
-            b = myWraps.resolveTopMaybe(getName());
-        }
+        Binding b = myWraps.resolveTopMaybe(getName());
+
         if (b == null)
         {
             b = new FreeBinding(getName());

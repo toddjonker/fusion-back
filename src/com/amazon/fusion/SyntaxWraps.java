@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2019 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2020 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
@@ -14,8 +14,10 @@ import java.util.Set;
  * expansion and compilation.  An instance may be associated with more than one
  * syntax object, so the underlying object is not referenced here.
  */
-final class SyntaxWraps
+class SyntaxWraps
 {
+    static final SyntaxWraps EMPTY_WRAPS = new Empty();
+
     /** Not null. */
     private final SyntaxWrap[] myWraps;
 
@@ -29,6 +31,12 @@ final class SyntaxWraps
         return new SyntaxWraps(initialWraps);
     }
 
+    /** Special constructor for {@link Empty} subclass. */
+    private SyntaxWraps()
+    {
+        myWraps = SyntaxWrap.EMPTY_ARRAY;
+    }
+
     private SyntaxWraps(SyntaxWrap initialWrap)
     {
         myWraps = new SyntaxWrap[] { initialWrap };
@@ -36,6 +44,7 @@ final class SyntaxWraps
 
     private SyntaxWraps(SyntaxWrap[] wraps)
     {
+        assert wraps.length > 0;
         myWraps = wraps;
     }
 
@@ -76,7 +85,7 @@ final class SyntaxWraps
     /**
      * @return not null.
      */
-    public Set<MarkWrap> computeMarks()
+    Set<MarkWrap> computeMarks()
     {
         Set<MarkWrap> marks = null;
 
@@ -103,7 +112,7 @@ final class SyntaxWraps
     }
 
 
-    final boolean hasMarks(Evaluator eval)
+    boolean hasMarks(Evaluator eval)
     {
         // We have to walk all wraps to match up cancelling pairs of marks.
         return ! computeMarks().isEmpty();
@@ -119,9 +128,7 @@ final class SyntaxWraps
      */
     Binding resolveMaybe(BaseSymbol name)
     {
-        if (myWraps.length == 0) return null;
-        Set<MarkWrap> marks = new HashSet<>();
-        return doResolveMaybe(name, marks);
+        return doResolveMaybe(name, new HashSet<MarkWrap>());
     }
 
     private Binding doResolveMaybe(BaseSymbol name, Set<MarkWrap> marks)
@@ -139,8 +146,6 @@ final class SyntaxWraps
      */
     Binding resolveTopMaybe(BaseSymbol name)
     {
-        if (myWraps.length == 0) return null;
-
         Iterator<SyntaxWrap> i = Arrays.asList(myWraps).iterator();
 
         SyntaxWrap wrap = i.next();
@@ -153,15 +158,57 @@ final class SyntaxWraps
      */
     BoundIdentifier resolveBoundIdentifier(BaseSymbol name)
     {
-        if (myWraps.length == 0)
-        {
-            return new BoundIdentifier(new FreeBinding(name),
-                                       Collections.<MarkWrap>emptySet());
-        }
-
         Set<MarkWrap> marks = new HashSet<>();
         Binding binding = doResolveMaybe(name, marks);
         if (binding == null) binding = new FreeBinding(name);
         return new BoundIdentifier(binding, marks);
+    }
+
+
+    private static final class Empty extends SyntaxWraps
+    {
+        SyntaxWraps addWrap(SyntaxWrap wrap)
+        {
+            return new SyntaxWraps(new SyntaxWrap[] { wrap });
+        }
+
+        /**
+         * Prepends a sequence of wraps onto our existing ones.
+         * It is assumed that the given list will not be modified later and can
+         * therefore be shared.
+         */
+        SyntaxWraps addWraps(SyntaxWraps wraps)
+        {
+            return wraps;
+        }
+
+        /**
+         * @return not null.
+         */
+        Set<MarkWrap> computeMarks()
+        {
+            return Collections.emptySet();
+        }
+
+        boolean hasMarks(Evaluator eval)
+        {
+            return false;
+        }
+
+        Binding resolveMaybe(BaseSymbol name)
+        {
+            return null;
+        }
+
+        Binding resolveTopMaybe(BaseSymbol name)
+        {
+            return null;
+        }
+
+        BoundIdentifier resolveBoundIdentifier(BaseSymbol name)
+        {
+            return new BoundIdentifier(new FreeBinding(name),
+                                       Collections.<MarkWrap>emptySet());
+        }
     }
 }

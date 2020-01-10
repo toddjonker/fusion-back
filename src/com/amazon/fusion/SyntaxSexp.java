@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2020 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
@@ -14,6 +14,7 @@ import static com.amazon.fusion.FusionSexp.unsafePairDot;
 import static com.amazon.fusion.FusionSexp.unsafePairHead;
 import static com.amazon.fusion.FusionSexp.unsafePairTail;
 import static com.amazon.fusion.FusionSexp.unsafeSexpSize;
+import static com.amazon.fusion.SyntaxWraps.EMPTY_WRAPS;
 import com.amazon.fusion.FusionSexp.BaseSexp;
 import com.amazon.fusion.FusionSexp.ImmutablePair;
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
@@ -64,7 +65,7 @@ final class SyntaxSexp
                                    SourceLocation loc,
                                    BaseSexp       sexp)
     {
-        return new SyntaxSexp(loc, ORIGINAL_STX_PROPS, null, sexp);
+        return new SyntaxSexp(loc, ORIGINAL_STX_PROPS, EMPTY_WRAPS, sexp);
     }
 
     static SyntaxSexp make(Evaluator eval, SourceLocation loc, BaseSexp sexp)
@@ -193,10 +194,10 @@ final class SyntaxSexp
     private void pushWraps(Evaluator eval)
         throws FusionException
     {
-        if (myWraps != null)  // We only have wraps when we have children.
+        if (myWraps != EMPTY_WRAPS)  // We only have wraps when we have children.
         {
             mySexp = pushWraps(eval, (ImmutablePair) mySexp, myWraps);
-            myWraps = null;
+            myWraps = EMPTY_WRAPS;
         }
     }
 
@@ -279,7 +280,7 @@ final class SyntaxSexp
         if (hasNoChildren()) return this;  // No children, no marks, all okay!
 
         BaseSexp newSexp = stripWraps(eval, (ImmutablePair) mySexp);
-        return new SyntaxSexp(getLocation(), getProperties(), null, newSexp);
+        return new SyntaxSexp(getLocation(), getProperties(), EMPTY_WRAPS, newSexp);
     }
 
 

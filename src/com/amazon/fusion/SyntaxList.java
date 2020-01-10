@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2017 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2020 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
@@ -7,6 +7,7 @@ import static com.amazon.fusion.FusionList.isImmutableList;
 import static com.amazon.fusion.FusionList.nullList;
 import static com.amazon.fusion.FusionList.unsafeListElement;
 import static com.amazon.fusion.FusionUtils.EMPTY_STRING_ARRAY;
+import static com.amazon.fusion.SyntaxWraps.EMPTY_WRAPS;
 import static java.lang.System.arraycopy;
 import com.amazon.fusion.FusionList.BaseList;
 import com.amazon.fusion.FusionSymbol.BaseSymbol;
@@ -64,7 +65,7 @@ final class SyntaxList
                                    SourceLocation loc,
                                    BaseList       datum)
     {
-        return new SyntaxList(loc, ORIGINAL_STX_PROPS, null, datum);
+        return new SyntaxList(loc, ORIGINAL_STX_PROPS, EMPTY_WRAPS, datum);
     }
 
     /**
@@ -115,7 +116,7 @@ final class SyntaxList
     private synchronized void pushWraps(Evaluator eval)
         throws FusionException
     {
-        if (myWraps != null)  // We only have wraps when we have children.
+        if (myWraps != EMPTY_WRAPS)  // We only have wraps when we have children.
         {
             boolean changed = false;
             int len = myImmutableList.size();
@@ -134,7 +135,7 @@ final class SyntaxList
                 myImmutableList = immutableList(eval, annotations, children);
             }
 
-            myWraps = null;
+            myWraps = EMPTY_WRAPS;
         }
     }
 
@@ -148,7 +149,7 @@ final class SyntaxList
         if (len == 0) return this;  // No children, no marks, all okay!
 
         // Even if we have no marks, some children may have them.
-        boolean mustCopy = (myWraps != null);
+        boolean mustCopy = (myWraps != EMPTY_WRAPS);
 
         Object[] children = new Object[len];
         for (int i = 0; i < len; i++)
@@ -163,7 +164,7 @@ final class SyntaxList
 
         BaseSymbol[] annotations = myImmutableList.getAnnotations();
         BaseList newList = immutableList(eval, annotations, children);
-        return new SyntaxList(getLocation(), getProperties(), null, newList);
+        return new SyntaxList(getLocation(), getProperties(), EMPTY_WRAPS, newList);
     }
 
 

@@ -1,14 +1,15 @@
-// Copyright (c) 2012-2014 Amazon.com, Inc. All rights reserved.
+// Copyright (c) 2012-2020 Amazon.com, Inc. All rights reserved.
 
 package com.amazon.fusion;
 
 import static com.amazon.fusion.FusionUtils.EMPTY_OBJECT_ARRAY;
+import static com.amazon.fusion.SyntaxWraps.EMPTY_WRAPS;
 
 abstract class SyntaxContainer
     extends SyntaxValue
 {
     /**
-     * The sequence of wraps around this value.
+     * The sequence of wraps around this value; not null.
      * Semantically, wraps only affect symbols and they should act as if they
      * are always pushed down immediately.  However, we cache them at
      * containers as an optimization. Any wraps are just being held here
@@ -19,13 +20,15 @@ abstract class SyntaxContainer
     SyntaxContainer(SourceLocation loc, Object[] properties, SyntaxWraps wraps)
     {
         super(loc, properties);
+
+        assert wraps != null;
         myWraps = wraps;
     }
 
     SyntaxContainer(SourceLocation loc)
     {
         super(loc, EMPTY_OBJECT_ARRAY);
-        myWraps = null;
+        myWraps = EMPTY_WRAPS;
     }
 
 
@@ -51,16 +54,7 @@ abstract class SyntaxContainer
         // Don't bother if this is an empty container.
         if (hasNoChildren()) return this;
 
-        SyntaxWraps newWraps;
-        if (myWraps == null)
-        {
-            newWraps = SyntaxWraps.make(wrap);
-        }
-        else
-        {
-            newWraps = myWraps.addWrap(wrap);
-        }
-        return copyReplacingWraps(newWraps);
+        return copyReplacingWraps(myWraps.addWrap(wrap));
     }
 
     /**
@@ -73,22 +67,13 @@ abstract class SyntaxContainer
         // Don't bother if this is an empty container.
         if (hasNoChildren()) return this;
 
-        SyntaxWraps newWraps;
-        if (myWraps == null)
-        {
-            newWraps = wraps;
-        }
-        else
-        {
-            newWraps = myWraps.addWraps(wraps);
-        }
-        return copyReplacingWraps(newWraps);
+        return copyReplacingWraps(myWraps.addWraps(wraps));
     }
 
 
     @Override
     boolean hasMarks(Evaluator eval)
     {
-        return (myWraps == null ? false : myWraps.hasMarks(eval));
+        return myWraps.hasMarks(eval);
     }
 }

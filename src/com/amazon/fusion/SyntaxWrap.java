@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2019 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2020 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
@@ -11,6 +11,9 @@ import java.util.Set;
  */
 abstract class SyntaxWrap
 {
+    static final SyntaxWrap[] EMPTY_ARRAY = new SyntaxWrap[0];
+
+
     /**
      * @param returnMarks <em>returns</em> the marks from this wrap and those
      * deeper. Must be mutable and not null.
