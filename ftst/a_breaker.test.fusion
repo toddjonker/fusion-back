@@ -1,0 +1,35 @@
+// Copyright (c) 2020 Amazon.com, Inc.  All rights reserved.
+
+// Compiler breaker!
+
+(require
+  "/fusion/eval"
+  "/fusion/experimental/check"
+  "/fusion/experimental/syntax"
+  "/fusion/io")
+
+
+(define_syntax check_bound
+  (lambda (stx)
+    (let [(id1 (syntax_get stx 1)),
+          (id2 (syntax_get stx 2))]
+      (if (bound_identifier_equal id1 id2)
+        (quasisyntax (let [((unsyntax id2) (quote wrong))]
+                       (let [((unsyntax id1) (quote binds))]
+                         id2)))
+        (quasisyntax (let [((unsyntax id2) (quote no_binds))]
+                       (let [((unsyntax id1) (quote wrong))]
+                         id2)))))))
+
+(writeln (expand (quote_syntax (check_bound a a))))
+
+// TODO why does that expand, successfully, to:
+//  ((lambda (a) ((lambda (a) id2) (quote binds))) (quote wrong))
+//   which has a bogus unbound id2 ?
+//     oh... that's probably treated as a undefined top-level reference, so its allowed.
+
+// But this then crashes at runtime:
+
+(check_same (quote binds) (check_bound a a))
+
+// Maybe because the macro-introduced binding is to undefined top-level?
