@@ -1,0 +1,34 @@
+(require
+  "/fusion/experimental/check"
+  "/fusion/experimental/syntax"
+  (rename_in "/fusion/experimental/syntax" (quote_syntax QS)))
+
+(let valid [] true)
+
+(check_false (is_identifier (QS _keyword_)))
+
+
+//(let _keyword_ [] true)
+// ORIG:
+//   com.amazon.fusion.SyntaxException: Bad syntax for 'letrec': expected bound name, not a keyword
+//   Source: _keyword_
+
+// NEW: Bad syntax: loop name isn't a valid identifier: _keyword_
+
+// ['']    // FIXME this crashes
+// FIXME java.lang.IllegalArgumentException: Cannot make an empty symbol
+//(check_false (is_identifier (quote '')))
+//(let '' [] true)
+
+
+(check_false (is_identifier (QS null.symbol)))   // FIXME this test fails!
+
+(let null.symbol [] true)
+// ORIG:
+// com.amazon.fusion.SyntaxException: Bad syntax for 'letrec': expected bound name
+//   Source: null.symbol
+
+// NEW: com.amazon.fusion.SyntaxException: Bad syntax for 'letrec': expected bound name
+//       Source: null.symbol
+
+
