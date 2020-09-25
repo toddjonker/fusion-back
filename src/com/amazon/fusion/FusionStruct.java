@@ -219,6 +219,27 @@ final class FusionStruct
         return EMPTY_STRUCT;
     }
 
+    static NonNullImmutableStruct forKeyValuePairs(Evaluator eval,
+                                                   Object    key,
+                                                   Object    val)
+    {
+        return null; // TODO
+    }
+
+    static NonNullImmutableStruct forKeyValuePairs(Evaluator eval,
+                                                   Object    key1,
+                                                   Object    val1,
+                                                   Object    key2,
+                                                   Object    val2)
+    {
+        return null; // TODO
+    }
+
+    static NonNullImmutableStruct forKeyValuePairs(Evaluator eval,
+                                                   Object... keyValuePairs)
+    {
+        return null; // TODO
+    }
 
     static NonNullImmutableStruct
     immutableStruct(Evaluator eval,
@@ -314,6 +335,25 @@ final class FusionStruct
         return ((MutableStruct) struct).asImmutable();
     }
 
+    /**
+     * Returns a mutable struct with the same content as {@code struct}.
+     * This is not a deep conversion: if any elements within {@code struct}
+     * are immutable, the same immutable instances will be in the result.
+     * <p>
+     * Since there is no mutable version of {@code null.struct}, it must not be
+     * passed here.
+     * </p>
+     * @param eval must not be null.
+     * @param struct must be a Fusion struct, but not {@code null.struct}.
+     */
+
+    static Object asMutableStruct(Evaluator eval, Object struct)
+        throws FusionException
+    {
+        if (struct instanceof MutableStruct) return struct;
+
+        return ((NonNullImmutableStruct) struct).asMutable(eval);
+    }
 
     /**
      * Returns a new, empty mutable struct.  This is equivalent to the Fusion
@@ -1436,6 +1476,11 @@ final class FusionStruct
                                    int size)
         {
             return immutableStruct(map, annotations, size);
+        }
+
+        MutableStruct asMutable(Evaluator eval)
+        {
+            return new MutableStruct(getMap(eval), myAnnotations, mySize);
         }
 
         @Override
