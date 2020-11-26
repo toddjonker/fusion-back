@@ -1468,6 +1468,7 @@ public final class HashArrayMappedTrie
                 {
                     if (count <= MIN_CHILDREN)
                     {
+                        // TODO Can this return a non-SINGLETON empty node?
                         return removeAndPack(index);
                     }
                     else
@@ -1548,7 +1549,14 @@ public final class HashArrayMappedTrie
          */
         private BitMappedNode<K, V> removeAndPack(int index)
         {
+            // This invariant ensures we'll never return an empty node.
+            assert count >= MIN_CHILDREN;
+
             Object[] kvPairs = new Object[2 * (count - 1)];
+
+            // We should never have to return an empty node.
+            assert kvPairs.length > 1;
+
             int j = 1;
             int bitmap = 0;
             for (int i = 0; i < index; i++)

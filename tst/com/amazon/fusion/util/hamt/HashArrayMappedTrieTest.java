@@ -1007,6 +1007,9 @@ public class HashArrayMappedTrieTest
     //=========================================================================
     // HashArrayMappedNode
 
+    // TODO: Don't start from empty HAMN, that's not possible in practice.
+    //  Instead, start with the minimum-sized (or maybe medium-sized?) HAMN and work from there.
+
     @Test
     public void testHashArrayMappedNodeInsertAndReplace()
     {
@@ -1038,12 +1041,19 @@ public class HashArrayMappedTrieTest
     @Test
     public void testHashArrayMappedNodeRemove()
     {
+        // Ensure that this stays as a HAMN, and that some keys aren't pushed down
+        // The current HAMN impl does not ensure it'll shrink back to EMPTY.
+
         TrieNode node = new HashArrayMappedNode<>();
         node = insert(node, 1, 1);
         node = insert(node, 2, 2);
         node = insert(node, 3, 3);
         node = noopRemove(node, 4);
         node = remove(node, 2);
+
+        // FIXME remove shrunk the node to BitMappedNode since it's under the minimum size
+        //   Test needs to be re-examined.
+        assertEquals(HashArrayMappedNode.class, node.getClass());
         node = remove(node, 1);
         node = remove(node, 3);
         node = noopRemove(node, 2);
