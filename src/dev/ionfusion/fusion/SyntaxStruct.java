@@ -105,7 +105,7 @@ final class SyntaxStruct
         };
 
         ImmutableStruct s = myStruct.transformFields(eval, visitor);
-        if (s == myStruct) return this;
+        if (s == myStruct) return this;  // FIXME bug? This doesn't null-out our own wraps.
 
         return new SyntaxStruct(getLocation(), getProperties(), null, s);
     }
