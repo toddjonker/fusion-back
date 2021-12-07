@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import org.junit.Rule;
@@ -290,6 +291,19 @@ public abstract class MultiHashTrieTestCase
         assertEquals(r2, r1);
         assertTrue(h2.isEmpty() || ! r1.equals(h1));
         assertTrue(h1.isEmpty() || ! r2.equals(h2));
+
+        for (Object key : r1.keySet())
+        {
+            Collection<?> values   = r1.getMulti(key);
+            ArrayList     expected = new ArrayList();
+            expected.addAll(h1.getMulti(key));
+            expected.addAll(h2.getMulti(key));
+            assertThat(values, containsInAnyOrder(expected.toArray()));
+            h1 = h1.withoutKey(key);
+            h2 = h2.withoutKey(key);
+        }
+        expectEmpty(h1);
+        expectEmpty(h2);
 
         return r1;
     }
