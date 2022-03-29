@@ -646,6 +646,14 @@ final class ModuleForm
             ModuleInstance module =
                 new ModuleInstance(myId, myDocs, store, myProvidedBindings);
 
+            // TODO current-namespace should be fresh and empty.
+            // See https://docs.racket-lang.org/guide/eval.html :
+            //
+            //    #lang racket
+            //    (eval '(cons 1 2))
+            //
+            // This fails because the initial current namespace is empty.
+
             for (CompiledForm form : myBody)
             {
                 // TODO FUSION-213 each eval should be wrapped with a prompt.
