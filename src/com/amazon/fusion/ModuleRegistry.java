@@ -136,6 +136,29 @@ final class ModuleRegistry
 
 
     /**
+     * Instantiates a module in this registry, if it's not already.
+     *
+     * @param eval
+     * @param id
+     * @return not null.
+     */
+    synchronized ModuleInstance dynamicRequire(Evaluator eval,
+                                               ModuleIdentity id)
+        throws FusionException
+    {
+        ModuleInstance mod = instantiate(eval, id);
+        if (mod != null) return mod;
+
+        ModuleNameResolver resolver = eval.getGlobalState().myModuleNameResolver;
+        resolver.resolveModulePath(eval, this, id, true, null);
+        assert myDeclarations.get(id) != null && myModules.get(id) == null;
+
+        mod = instantiate(eval, id);
+        assert mod != null;
+        return mod;
+    }
+
+    /**
      * Locates an instantiated module in a source registry and attaches it to
      * this one.  All of its required module instances and their declarations
      * are copied as well.

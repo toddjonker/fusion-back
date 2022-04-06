@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2018 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2022 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
@@ -10,6 +10,19 @@ import static com.amazon.fusion.FusionString.checkRequiredStringArg;
 final class FusionNamespace
 {
     private FusionNamespace() { }
+
+
+    static Object dynamicRequire(Evaluator eval, String modulePath)
+        throws FusionException
+    {
+//      if (! ModuleIdentity.isValidAbsoluteModulePath(modulePath)) throw
+
+        ModuleRegistry reg = eval.findCurrentNamespace().getRegistry();
+        reg.dynamicRequire(eval, ModuleIdentity.forAbsolutePath(modulePath));
+
+        return FusionVoid.voidValue(eval);
+    }
+
 
     /**
      *

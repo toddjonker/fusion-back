@@ -113,7 +113,7 @@ final class ModuleNameResolver
      * @throws ModuleNotFoundException if the module could not be found.
      */
     ModuleIdentity resolve(Evaluator      eval,
-                           ModuleIdentity baseModule,
+                           ModuleIdentity baseModule, // TODO swap args
                            SyntaxValue    pathStx,
                            boolean        load)
         throws FusionException, ModuleNotFoundException
@@ -158,7 +158,8 @@ final class ModuleNameResolver
      * </p>
      *
      * @param eval the evaluation context.
-     * @param baseModule the starting point for relative references; not null.
+     * @param baseModule the starting point for relative references;
+     *                   must not be null if {@code modulePath} is relative.
      * @param modulePath must be a module path.
      * @param load should we load the module, or just determine its identity?
      * @param stxForErrors is used for error messaging; may be null.
@@ -166,7 +167,7 @@ final class ModuleNameResolver
      * @throws ModuleNotFoundException if the module could not be found.
      */
     ModuleIdentity resolveModulePath(Evaluator eval,
-                                     ModuleIdentity baseModule,
+                                     ModuleIdentity baseModule, // TODO swap args order
                                      String modulePath,
                                      boolean load,
                                      SyntaxValue stxForErrors)
@@ -181,6 +182,17 @@ final class ModuleNameResolver
         ModuleRegistry reg = eval.findCurrentNamespace().getRegistry();
         ModuleIdentity id = ModuleIdentity.forPath(baseModule, modulePath);
 
+        return resolveModulePath(eval, reg, id, load, stxForErrors);
+    }
+
+
+    ModuleIdentity resolveModulePath(Evaluator eval,
+                                     ModuleRegistry reg,
+                                     ModuleIdentity id,
+                                     boolean load,
+                                     SyntaxValue stxForErrors)
+        throws FusionException, ModuleNotFoundException
+    {
         if (isDeclared(reg, id)) return id;
 
         ModuleLocation loc = locate(eval, id, stxForErrors);
@@ -192,7 +204,7 @@ final class ModuleNameResolver
 
         StringBuilder buf = new StringBuilder();
         buf.append("A module named ");
-        buf.append(printString(modulePath));
+        buf.append(printString(id.absolutePath()));
         buf.append(" could not be found in the registered repositories.");
         buf.append(" The repositories are:\n");
         for (ModuleRepository repo : myRepositories)
