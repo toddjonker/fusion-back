@@ -197,6 +197,20 @@ final class StandardTopLevel
     }
 
 
+    ModuleInstance instantiateModule(ModuleIdentity id)
+        throws FusionInterruptedException, FusionException
+    {
+        try
+        {
+            return myNamespace.loadAndInstantiateModule(myEvaluator, id);
+        }
+        catch (FusionInterrupt e)
+        {
+            throw new FusionInterruptedException(e);
+        }
+    }
+
+
     void attachModule(StandardTopLevel src, String modulePath)
         throws FusionInterruptedException, FusionException
     {

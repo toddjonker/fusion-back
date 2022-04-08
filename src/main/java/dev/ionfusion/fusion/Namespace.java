@@ -668,9 +668,39 @@ abstract class Namespace
                                                      null /* stxForErrors */);
     }
 
+
+    final ModuleIdentity loadModule(Evaluator eval, ModuleIdentity id)
+        throws FusionException
+    {
+        // Make sure the resolver uses our registry.
+        eval = eval.parameterizeCurrentNamespace(this);
+
+        return eval.findResolver().resolveModulePath(eval,
+                                                     getModuleId(),
+                                                     id.absolutePath(),
+                                                     id,
+                                                     true /* load */,
+                                                     null /* stxForErrors */);
+    }
+
+
+    final ModuleInstance loadAndInstantiateModule(Evaluator eval,
+                                                  ModuleIdentity id)
+        throws FusionException
+    {
+        // Make sure the resolver and module instantiation uses our registry.
+        // FIXME test this!  It was missed.
+        eval = eval.parameterizeCurrentNamespace(this);
+
+        loadModule(eval, id);
+        return myRegistry.instantiate(eval, id);
+    }
+
+
     void attachModule(Evaluator eval, Namespace srcNamespace, String modulePath)
         throws FusionException
     {
+        // FIXME this doesn't guarantee the right registry on current-namespace
         ModuleNameResolver resolver = eval.findResolver();
 
         // Resolve the path WRT the *source* registry, so we can locate
