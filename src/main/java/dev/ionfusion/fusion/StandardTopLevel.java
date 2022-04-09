@@ -169,7 +169,7 @@ final class StandardTopLevel
                 myEvaluator.parameterizeCurrentNamespace(myNamespace);
 
             ModuleNameResolver resolver =
-                myEvaluator.getGlobalState().myModuleNameResolver;
+                myEvaluator.findResolver();
             ModuleIdentity id =
                 ModuleIdentity.forAbsolutePath(absoluteModulePath);
             ModuleLocation loc =

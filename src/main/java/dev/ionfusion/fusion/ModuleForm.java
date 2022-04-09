@@ -41,13 +41,10 @@ final class ModuleForm
 
 
     private final DynamicParameter myCurrentModuleDeclareName;
-    private final ModuleNameResolver myModuleNameResolver;
 
-    ModuleForm(ModuleNameResolver moduleNameResolver,
-               DynamicParameter currentModuleDeclareName)
+    ModuleForm(DynamicParameter currentModuleDeclareName)
     {
         myCurrentModuleDeclareName = currentModuleDeclareName;
-        myModuleNameResolver = moduleNameResolver;
     }
 
 
@@ -99,8 +96,8 @@ final class ModuleForm
             try
             {
                 languageId =
-                    myModuleNameResolver.resolve(eval, id, initialBindingsStx,
-                                                 true /*load it*/);
+                    eval.findResolver().resolve(eval, id, initialBindingsStx,
+                                                true /*load it*/);
                 // Force instantiation to tie any exception to the declaration.
                 registry.instantiate(eval, languageId);
             }
@@ -617,7 +614,7 @@ final class ModuleForm
             ModuleRegistry registry =
                 eval.findCurrentNamespace().getRegistry();
             ModuleNameResolver resolver =
-                eval.getGlobalState().myModuleNameResolver;
+                eval.findResolver();
             registry.declare(resolver, myId, this);
 
             return voidValue(eval);

@@ -33,11 +33,8 @@ import java.util.Set;
 final class RequireForm
     extends SyntacticForm
 {
-    private final ModuleNameResolver myModuleNameResolver;
-
-    RequireForm(ModuleNameResolver moduleNameResolver)
+    RequireForm()
     {
-        myModuleNameResolver = moduleNameResolver;
     }
 
 
@@ -294,6 +291,8 @@ final class RequireForm
                                             SyntaxValue spec)
         throws FusionException
     {
+        ModuleNameResolver resolver = eval.findResolver();
+
         if (spec instanceof SyntaxSexp)
         {
             SyntaxSexp sexp = (SyntaxSexp) spec;
@@ -304,8 +303,8 @@ final class RequireForm
                     SyntaxValue pathStx = sexp.get(eval, 1);
 
                     ModuleIdentity moduleId =
-                        myModuleNameResolver.resolve(eval, baseModule,
-                                                     pathStx, true);
+                        resolver.resolve(eval, baseModule,
+                                         pathStx, true);
 
                     // Resolver has type-checked the module-path for us.
                     SyntaxText context = (SyntaxText) pathStx;
@@ -333,10 +332,8 @@ final class RequireForm
                     SyntaxValue pathStx = sexp.get(eval, 2);
 
                     ModuleIdentity moduleId =
-                            myModuleNameResolver.resolve(eval,
-                                                         baseModule,
-                                                         pathStx,
-                                                         true);
+                        resolver.resolve(eval, baseModule,
+                                         pathStx, true);
 
                     // Resolver has type-checked the module-path for us.
                     SyntaxText context = (SyntaxText) pathStx;
@@ -363,10 +360,8 @@ final class RequireForm
                 {
                     // Here we are loading but not instantiating the required module.
                     ModuleIdentity moduleId =
-                            myModuleNameResolver.resolve(eval,
-                                                         baseModule,
-                                                         sexp.get(eval, 1),
-                                                         true);
+                    resolver.resolve(eval, baseModule,
+                                     sexp.get(eval, 1), true);
 
                     // In this form, we retain the lexical context from the localId.
                     SyntaxSymbol localId = (SyntaxSymbol) sexp.get(eval, 2);
@@ -385,7 +380,7 @@ final class RequireForm
         {
             // Here we are loading but not instantiating the required module.
             ModuleIdentity moduleId =
-                myModuleNameResolver.resolve(eval, baseModule, spec, true);
+                resolver.resolve(eval, baseModule, spec, true);
 
             // "The lexical context of the module-path form determines the
             // context of the introduced identifiers"

@@ -165,13 +165,13 @@ final class GlobalState
         ns.define("java_new", new JavaNewProc());
         ns.define(LAMBDA, new LambdaForm());
         ns.define("load", new LoadProc(loadHandler));
-        ns.define(MODULE, new ModuleForm(resolver, currentModuleDeclareName));
+        ns.define(MODULE, new ModuleForm(currentModuleDeclareName));
         ns.define(ONLY_IN, new RequireForm.OnlyInForm());
         ns.define(PREFIX_IN, new RequireForm.PrefixInForm());
         ns.define(PROVIDE, new ProvideForm());
         ns.define(RENAME_IN, new RequireForm.RenameInForm());
         ns.define(RENAME_OUT, new ProvideForm.RenameOutForm());
-        ns.define(REQUIRE, new RequireForm(resolver));
+        ns.define(REQUIRE, new RequireForm());
 
 
         ns.instantiate();
