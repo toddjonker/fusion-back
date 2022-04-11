@@ -9,7 +9,6 @@ import static com.amazon.fusion.FusionCompare.EqualityTier.STRICT_EQUAL;
 import static com.amazon.fusion.FusionCompare.EqualityTier.TIGHT_EQUAL;
 import static com.amazon.fusion.FusionIo.dispatchIonize;
 import static com.amazon.fusion.FusionIo.dispatchWrite;
-import static com.amazon.fusion.FusionIterator.iterate;
 import static com.amazon.fusion.FusionList.checkNullableListArg;
 import static com.amazon.fusion.FusionList.unsafeJavaIterate;
 import static com.amazon.fusion.FusionList.unsafeListSize;
@@ -21,7 +20,6 @@ import static com.amazon.fusion.FusionText.unsafeTextToJavaString;
 import static com.amazon.fusion.FusionVoid.voidValue;
 import static com.amazon.ion.util.IonTextUtils.printSymbol;
 import static java.util.AbstractMap.SimpleEntry;
-import static java.util.Collections.emptyIterator;
 import com.amazon.fusion.FusionBool.BaseBool;
 import com.amazon.fusion.FusionCollection.BaseCollection;
 import com.amazon.fusion.FusionCompare.EqualityTier;
@@ -221,6 +219,14 @@ final class FusionStruct
         if (struct instanceof ImmutableStruct) return struct;
 
         return ((MutableStruct) struct).asImmutable();
+    }
+
+    // TODO Add asMutableStruct (must throw given null.struct!)
+    static Object asMutableStruct(Evaluator eval, Object struct)
+        throws FusionException
+    {
+        if (struct instanceof MutableStruct) return struct;
+
     }
 
 
@@ -1729,6 +1735,7 @@ final class FusionStruct
         Object next(Evaluator eval)
             throws FusionException
         {
+            // FIXME: this propagates NoSuchElementException
             Map.Entry<String, Object> entry = myEntryIterator.next();
 
             Object fieldName = makeSymbol(eval, entry.getKey());
@@ -1747,11 +1754,6 @@ final class FusionStruct
             throws FusionException
         {
             BaseStruct s = (BaseStruct) struct;
-            if (s.size() == 0)
-            {
-                return iterate(eval, emptyIterator());
-            }
-
             return new StructIterator(s.getMap(eval));
         }
     }
