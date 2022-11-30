@@ -65,7 +65,7 @@ abstract class SyntaxText<Sub extends SyntaxText>
             newWraps = wraps;
         }
         else
-        {
+        {   // Maybe  no-op if they are the same?  
             newWraps = myWraps.addWraps(wraps);
         }
         return copyReplacingWraps(newWraps);

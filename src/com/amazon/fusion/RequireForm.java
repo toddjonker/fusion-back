@@ -137,7 +137,7 @@ final class RequireForm
                 check.requiredIdentifier(i);
             }
 
-            expandedSpecs.add(SyntaxSexp.make(eval, children));
+            expandedSpecs.add(SyntaxSexp.make(eval, children));  // TODO srcLoc
         }
         else if (b == globalState.myKernelPrefixInBinding)
         {
@@ -353,6 +353,10 @@ final class RequireForm
                 }
                 case "rename":
                 {
+                    // FIXME: I think this is wrong, looks like Racket imports
+                    //  ALL exported bindings, with selected renames.
+                    //  See implementation of `require` in reqprov.rkt
+
                     // Here we are loading but not instantiating the required module.
                     ModuleIdentity moduleId =
                             myModuleNameResolver.resolve(eval,

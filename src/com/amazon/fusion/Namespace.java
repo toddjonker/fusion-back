@@ -703,6 +703,8 @@ abstract class Namespace
 
         for (ProvidedBinding provided : module.providedBindings())
         {
+            // In require-all we mint a fresh identifier with the given context.
+            // TODO: This should have the location of the require-spec.
             SyntaxSymbol id = SyntaxSymbol.make(eval, null, provided.getName());
             id = (SyntaxSymbol) Syntax.applyContext(eval, context, id);
             installRequiredBinding(eval, id, provided);
