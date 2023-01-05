@@ -45,6 +45,8 @@ final class FusionNamespace
         Object doApply(Evaluator eval, Object arg) throws FusionException
         {
             String language = checkRequiredStringArg(eval, this, 0, arg);
+
+            // FIXME why doesn't this use ModuleIdentity.isValidAbsoluteModulePath()?
             if (! (language.startsWith("/") && 1 < language.length()))
             {
                 throw argFailure("absolute module path", 0, arg);
