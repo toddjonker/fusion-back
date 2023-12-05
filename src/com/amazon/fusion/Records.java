@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2023-2024 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
@@ -140,17 +140,17 @@ final class Records
             throws IOException, FusionException
         {
             // TODO Support opaque records
+            out.append("(");
             myType.writeName(eval, out);
-            out.append("::{[");
 
             int length = myFields.length;
             for (int i = 0; i < length; i++)
             {
-                if (i != 0) out.append(", ");
+                out.append(" ");
                 dispatchWrite(eval, out, myFields[i]);
             }
 
-            out.append("]}");
+            out.append(")");
         }
     }
 
@@ -178,7 +178,9 @@ final class Records
             // implementing procedure’s name."
             // https://tinyurl.com/object-name
 
-            this.inferName(myProc.getInferredName());
+            String name = myProc.getInferredName();
+            if (name == null) name = myType.myName.stringValue();
+            this.inferName(name);
 
             // I have to wonder if there's contexts in which myProc hasn't had
             // its inferred name assigned yet; perhaps this should be dynamic?

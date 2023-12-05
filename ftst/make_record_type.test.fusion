@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2023-2024 Amazon.com, Inc.  All rights reserved.
 
 (require
   "/fusion/experimental/check"
@@ -38,8 +38,8 @@
   (expect_argument_error (R1_get r1 -1))
   (expect_argument_error (R1_get r1  1))
 
-  (check == "R0::{[]}"   (display_to_string r0))
-  (check == "R1::{[11]}" (display_to_string r1))
+  (check == "(R0)"    (display_to_string r0))
+  (check == "(R1 11)" (display_to_string r1))
 )
 
 
