@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2015 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2024 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
@@ -74,7 +74,7 @@ final class ArgumentException
      *   -1 means a specific position isn't implicated.
      * @param actuals must not be null or zero-length.
      */
-    ArgumentException(NamedValue name, String expectation,
+    ArgumentException(Procedure name, String expectation,
                       int badPos, Object... actuals)
     {
         this(name.identify(), expectation, badPos, actuals);
@@ -85,7 +85,7 @@ final class ArgumentException
      *   -1 means a specific arg isn't implicated.
      * @param actual must not be null.
      */
-    ArgumentException(NamedValue name, String expectation,
+    ArgumentException(Procedure name, String expectation,
                       int badPos, Object actual)
     {
         this(name.identify(), expectation, badPos, new Object[]{ actual });

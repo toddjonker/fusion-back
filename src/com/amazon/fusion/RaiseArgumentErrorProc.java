@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2018 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2024 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
@@ -17,14 +17,10 @@ final class RaiseArgumentErrorProc
     {
         checkArityAtLeast(4, args);
 
-        String name     = checkRequiredTextArg(eval, this, 0, args);
         String expected = checkRequiredStringArg(eval, this, 1, args);
         int    badPos   = checkIntArgToJavaInt(eval, this, 2, args);
 
         Object[] actuals = Arrays.copyOfRange(args, 3, args.length);
-
-        if (name.isEmpty()) name = "unknown procedure";
-
         if (actuals.length <= badPos)
         {
             // The position is bad, but we don't want to blow up because these
@@ -33,6 +29,22 @@ final class RaiseArgumentErrorProc
             badPos = -1;
         }
 
-        throw new ArgumentException(name, expected, badPos, actuals);
+        Object where = args[0];
+        if (where instanceof Procedure)
+        {
+            throw new ArgumentException((Procedure) where, expected, badPos, actuals);
+        }
+
+        if (FusionText.isText(eval, where))
+        {
+            String name = FusionText.unsafeTextToJavaString(eval, where);
+            if (name != null)
+            {
+                if (name.isEmpty()) name = "anonymous procedure";
+                throw new ArgumentException(name, expected, badPos, actuals);
+            }
+        }
+
+        throw argFailure("procedure or non-null string or symbol", 0, args);
     }
 }

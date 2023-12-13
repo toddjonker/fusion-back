@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2018 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2013-2024 Amazon.com, Inc.  All rights reserved.
 
 package com.amazon.fusion;
 
@@ -16,12 +16,25 @@ final class RaiseArityErrorProc
     {
         checkArityAtLeast(2, args);
 
-        String name      = checkRequiredTextArg(eval, this, 0, args);
         int arity        = checkIntArgToJavaInt(eval, this, 1, args);
         Object[] actuals = Arrays.copyOfRange(args, 2, args.length);
 
-        if (name.isEmpty()) name = "unknown procedure";
+        Object where = args[0];
+        if (where instanceof Procedure)
+        {
+            throw new ArityFailure((Procedure) where, arity, arity, actuals);
+        }
 
-        throw new ArityFailure(name, arity, arity, actuals);
+        if (FusionText.isText(eval, where))
+        {
+            String name = FusionText.unsafeTextToJavaString(eval, where);
+            if (name != null)
+            {
+                if (name.isEmpty()) name = "anonymous procedure";
+                throw new ArityFailure(name, arity, arity, actuals);
+            }
+        }
+
+        throw argFailure("procedure or non-null string or symbol", 0, args);
     }
 }

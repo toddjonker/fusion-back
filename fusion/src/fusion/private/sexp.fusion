@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2023 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2024 Amazon.com, Inc.  All rights reserved.
 
 (module sexp '/fusion/private/kernel2'
 
@@ -29,7 +29,7 @@ the result is void.
       (unsafe_pair_head sexp)
       (if (is_sexp sexp)
         (void)
-        (raise_argument_error "head" "sexp" 0 sexp))))
+        (raise_argument_error head "sexp" 0 sexp))))
 
 
   (define (tail sexp)
@@ -42,7 +42,7 @@ zero-length or `null.sexp`), the result is void.
       (unsafe_pair_tail sexp)
       (if (is_sexp sexp)
         (void)
-        (raise_argument_error "tail" "sexp" 0 sexp))))
+        (raise_argument_error tail "sexp" 0 sexp))))
 
 
   (define (sexp_append front back)
@@ -61,8 +61,8 @@ This is a temporary, limited implementation for internal use.
               // s1 must be () or null.sexp
               (if (is_sexp s2)
                 (if (is_null s2) (quote ()) s2)
-                (raise_argument_error "sexp_append" "sexp" 1 front back))
-              (raise_argument_error "sexp_append" "sexp" 0 front back)))))]
+                (raise_argument_error sexp_append "sexp" 1 front back))
+              (raise_argument_error sexp_append "sexp" 0 front back)))))]
       (loop front back)))
 
 
@@ -81,7 +81,7 @@ elements) are lost.
     '''
     (letrec
       [(bad_arg
-         (lambda () (raise_argument_error "reverse" "sexp" 0 sexp))),
+         (lambda () (raise_argument_error reverse "sexp" 0 sexp))),
        (reverse_onto
          //  Reverses the `front` sexp, prepending onto the `back` sexp.
          (lambda (front back)

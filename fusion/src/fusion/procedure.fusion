@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2019 Amazon.com, Inc.  All rights reserved.
+// Copyright (c) 2012-2024 Amazon.com, Inc.  All rights reserved.
 
 (module procedure "/fusion/private/builtins"
 
@@ -258,7 +258,7 @@ Returns a procedure based on `proc` and the given leftmost `arg`s.
         (let [(proc (head rest)),
               (left_args (tail rest))]
           (unless (is_procedure (head rest))
-            (apply raise_argument_error "curry_left" "procedure" 0 rest))
+            (apply raise_argument_error curry_left "procedure" 0 rest))
           (if (= size_rest 2)
             // Only one argument, so we can optimize the apply call.
             (let [(left_arg (head left_args))]
@@ -292,7 +292,7 @@ Returns a procedure based on `proc` and the given rightmost `arg`s.
         (let [(proc (head rest)),
               (right_args (tail rest))]
           (unless (is_procedure (head rest))
-            (apply raise_argument_error "curry_right" "procedure" 0 rest))
+            (apply raise_argument_error curry_right "procedure" 0 rest))
           (lambda args
             (apply proc (sexp_append args right_args)))))))
 
