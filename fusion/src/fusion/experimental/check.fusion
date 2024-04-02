@@ -411,6 +411,14 @@ Checks that `(same expected actual)` is truthy.
     (same expected actual))
 
 
+  (provide check_not_same)
+  (define_binary_check (check_not_same expected actual)
+    '''
+Checks that `(same expected actual)` is not truthy.
+    '''
+    (not (same expected actual)))
+
+
   (provide check_true)
   (define_check (check_true val)
     '''
