@@ -43,6 +43,12 @@ public final class _Private_ModuleDocumenter
         log("Building module docs");
         ModuleDoc doc = buildDocTree(runtime, filter, repoDir);
 
+        if (doc.submoduleMap().isEmpty())
+        {
+            // TODO This should be a fatal error.
+            log("WARNING: No modules found");
+        }
+
         log("Writing module docs");
         writeModuleTree(filter, outputDir, ".", doc);
 
