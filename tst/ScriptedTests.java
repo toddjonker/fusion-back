@@ -1,13 +1,11 @@
 // Copyright Ion Fusion contributors. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import static dev.ionfusion.fusion.CoreTestCase.ftstRepositoryDirectory;
-import static dev.ionfusion.fusion.CoreTestCase.fusionBootstrapDirectory;
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
-import dev.ionfusion.fusion.FusionException;
+
 import dev.ionfusion.fusion.FusionRuntime;
-import dev.ionfusion.fusion.FusionRuntimeBuilder;
+import dev.ionfusion.fusion.junit.FusionRuntimeInjector;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +16,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 
 /**
@@ -28,6 +27,7 @@ import org.junit.jupiter.api.TestFactory;
  * All tests run using a single {@link FusionRuntime}.
  * If `ftst/repo` is a directory, it's added as a repository.
  */
+@ExtendWith(FusionRuntimeInjector.class)
 public class ScriptedTests
 {
     /* 2024-03-28 Concurrent execution runs notably slower than same-thread,
@@ -35,41 +35,14 @@ public class ScriptedTests
      */
     @TestFactory
     @DisplayName("ftst/")
-    Stream<DynamicNode> ftst()
+    Stream<DynamicNode> ftst(FusionRuntime runtime)
         throws Exception
     {
-        FusionRuntime runtime = makeRuntimeBuilder().build();
-
         return forDir(Paths.get("ftst"), runtime);
     }
 
 
     //========================================================================
-
-
-    private FusionRuntimeBuilder makeRuntimeBuilder()
-        throws FusionException
-    {
-        FusionRuntimeBuilder b = FusionRuntimeBuilder.standard();
-
-        // This allows tests to run in an IDE, so that we don't have to copy the
-        // bootstrap repo into the classpath.  In scripted builds, this has no
-        // effect since the classpath includes the code, which will shadow the
-        // content of this directory.
-        b = b.withBootstrapRepository(fusionBootstrapDirectory().toFile());
-
-        // Enable this to have coverage collected during an IDE run.
-//      b = b.withCoverageDataDirectory(new File("build/private/fcoverage"));
-
-        // This has no effect in an IDE, since this file is not on its copy of
-        // the test classpath.  In scripted builds, this provides the coverage
-        // configuration. Historically, it also provided the bootstrap repo.
-        b = b.withConfigProperties(getClass(), "/fusion.properties");
-
-        b.addRepositoryDirectory(ftstRepositoryDirectory().toFile());
-
-        return b.immutable();
-    }
 
 
     private Stream<DynamicNode> forDir(Path dir, FusionRuntime runtime)
