@@ -134,7 +134,7 @@ final class FusionEval
         }
         catch (FusionException e)
         {
-            e.addContext(topLocation);
+            e.addContext(topLocation);  // TODO refresh when stx changes
             throw e;
         }
     }

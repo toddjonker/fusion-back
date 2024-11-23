@@ -35,7 +35,6 @@ import com.amazon.ion.Timestamp;
 import com.amazon.ion.system.IonReaderBuilder;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +62,11 @@ class Evaluator
         myGlobalState     = outerBindings.myGlobalState;
         mySystem          = outerBindings.mySystem;
         myOuterFrame      = outerBindings;
+
+        // TODO OPTIM Don't allocate more HashMap than is needed.
+        //   Consider whether a Map is needed at all, most frames probably
+        //   have only one or a small number of marks.
+        //   Perhaps use our HAMT? I'm not sure if this is mutable.
         myContinuationMarks = new HashMap<>();
     }
 

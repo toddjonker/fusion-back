@@ -24,6 +24,7 @@
   // TODO PERF: This unnecessarily transcodes to and from UTF-8.
   //   We need something like a current_output_character_port that accepts
   //   Unicode characters, not bytes, so we can build a string directly.
+  // TODO: Invocation inconsistent WRT `with_ion_from_*` which take a thunk.
   (define_syntax with_output_to_string
     '''
     (with_output_to_string body ...)
