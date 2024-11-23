@@ -636,6 +636,8 @@ class Evaluator
 
             checkingResult: while (true)
             {
+                assert result != null;
+
                 if (Thread.currentThread().isInterrupted())
                 {
                     throw new FusionInterrupt();
@@ -663,8 +665,16 @@ class Evaluator
                         throw e;
                     }
 
+                    if (result == null)
+                    {
+                        return voidValue(this);
+                    }
+
                     continue checkingResult;
                 }
+
+                // TODO OPTIM Remove this, force forms to return non-null.
+                assert result != null;
                 if (result == null)
                 {
                     result = voidValue(this);
