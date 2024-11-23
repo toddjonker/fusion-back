@@ -632,7 +632,7 @@ class Evaluator
     {
         evaluating: while (true)
         {
-            Object result = form.doEval(this, store);
+            Object result = form.doEval(this, store);  // catch Error?
 
             checkingResult: while (true)
             {
@@ -659,7 +659,7 @@ class Evaluator
                         checkSingleArgResults(args);
                         result = tail.myProc.doApply(this, args);
                     }
-                    catch (FusionException e)
+                    catch (FusionException e)   // catch Error?
                     {
                         e.addContext(tail.myLoc);
                         throw e;
@@ -681,7 +681,7 @@ class Evaluator
                 }
                 return result;
             }
-        }
+        }   // catch Error?
     }
 
 
@@ -692,7 +692,7 @@ class Evaluator
         {
             return eval(store, form);
         }
-        catch (FusionException e)
+        catch (FusionException e)   // catch Error?
         {
             e.addContext(loc);
             throw e;
@@ -721,7 +721,7 @@ class Evaluator
                 checkSingleArgResults(args);
                 result = proc.doApply(this, args);
             }
-            catch (FusionException e)
+            catch (FusionException e)   // catch Error?
             {
                 e.addContext(callLocation);
                 throw e;
@@ -737,7 +737,7 @@ class Evaluator
                 if (result instanceof TailForm)
                 {
                     TailForm tail = (TailForm) result;
-                    result = tail.myForm.doEval(this, tail.myStore);
+                    result = tail.myForm.doEval(this, tail.myStore);   // catch Error?
                     continue checkingResult;
                 }
                 if (result instanceof TailCall)
@@ -754,7 +754,7 @@ class Evaluator
                 }
                 return result;
             }
-        }
+        }   // catch Error?
     }
 
 
