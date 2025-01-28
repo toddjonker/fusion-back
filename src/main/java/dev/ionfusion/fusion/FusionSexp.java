@@ -26,6 +26,7 @@ import com.amazon.ion.IonValue;
 import com.amazon.ion.IonWriter;
 import com.amazon.ion.ValueFactory;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -461,6 +462,15 @@ final class FusionSexp
             throws FusionException
         {
             assert length == 0;
+        }
+
+        @Override
+        Iterable asIterable(Evaluator eval)
+            throws FusionException
+        {
+            Object[] array = new Object[size()];
+            unsafeCopy(eval, 0, array, 0, size());
+            return Arrays.asList(array);
         }
 
         /**

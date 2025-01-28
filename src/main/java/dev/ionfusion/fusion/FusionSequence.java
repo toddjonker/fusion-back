@@ -38,6 +38,13 @@ final class FusionSequence
             throws FusionException;
 
         /**
+         * Assumes that this is a proper sequence and that the length doesn't
+         * extend beyond the end of this sequence.
+         */
+        abstract Iterable asIterable(Evaluator eval)
+            throws FusionException;
+
+        /**
          * Append a number of sequences to this one.
          *
          * @param sequences may be empty.
