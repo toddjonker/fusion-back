@@ -14,6 +14,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
 
 /**
  * A simple Read-Eval-Print Loop for Fusion.
@@ -67,7 +71,10 @@ class Repl
             return new Executor(globals, in, out);
         }
 
-        return new Executor(globals, console);
+        LineReader lineReader = LineReaderBuilder.builder().build();
+        PrintWriter out = console.writer();
+
+        return new Executor(globals, lineReader, out);
     }
 
 
@@ -75,27 +82,27 @@ class Repl
         extends FusionExecutor
     {
         private       TopLevel       myTopLevel;
-        private final Console        myConsole;
+        private final LineReader     myLineReader;
         private final BufferedReader myIn;
         private final PrintWriter    myOut;
 
 
-        Executor(GlobalOptions globals, Console console)
+        Executor(GlobalOptions globals, LineReader lineReader, PrintWriter out)
         {
             super(globals);
 
-            myConsole = console;
-            myIn      = null;
-            myOut     = console.writer();
+            myLineReader = lineReader;
+            myIn         = null;
+            myOut        = out;
         }
 
         Executor(GlobalOptions globals, BufferedReader in, PrintWriter out)
         {
             super(globals);
 
-            myConsole = null;
-            myIn      = in;
-            myOut     = out;
+            myLineReader = null;
+            myIn         = in;
+            myOut        = out;
         }
 
 
@@ -128,7 +135,7 @@ class Repl
 
         private void welcome()
         {
-            red("\nWelcome to Fusion!\n\n");
+            myOut.println(red("\nWelcome to Fusion!\n"));
             myOut.println("Type...");
             myOut.println("  (exit)            to exit");
             myOut.println("  (help SOMETHING)  to see documentation; try '(help help)'!\n");
@@ -138,14 +145,10 @@ class Repl
         private boolean rep()
             throws IOException
         {
-            blue("$");
             String line = read();
 
             if (line == null)
             {
-                // Print a newline otherwise the user's shell prompt will be on
-                // the same line, and that's ugly.
-                myOut.println();
                 return false;
             }
 
@@ -156,14 +159,13 @@ class Repl
             }
             catch (ExitException e)
             {
-                blue("Goodbye!\n");
+                myOut.println(blue("Goodbye!"));
                 myOut.flush();
                 return false;
             }
             catch (FusionException | IonException e)
             {
-                red(e.getMessage());
-                myOut.println();
+                myOut.println(red(e.getMessage()));
             }
 
             return true;
@@ -172,29 +174,34 @@ class Repl
         private String read()
             throws IOException
         {
-            if (myConsole != null)
+            if (myLineReader != null)
             {
-                return myConsole.readLine(" ");
+                try
+                {
+                    return myLineReader.readLine(blue("$ "));
+                }
+                catch (UserInterruptException | EndOfFileException e)
+                {
+                    return null;
+                }
             }
+
             else
             {
+                myOut.print(blue("$"));
                 myOut.flush();
                 return myIn.readLine();
             }
         }
 
-        private void blue(String text)
+        private String blue(String text)
         {
-            myOut.print("\033[1;34m");
-            myOut.print(text);
-            myOut.print("\033[m");
+            return "\033[1;34m" + text + "\033[m";
         }
 
-        private void red(String text)
+        private String red(String text)
         {
-            myOut.print("\033[1;31m");
-            myOut.print(text);
-            myOut.print("\033[m");
+            return "\033[1;31m" + text + "\033[m";
         }
     }
 }

@@ -20,6 +20,9 @@ dependencies {
     //  generate their docs.  That should be handled by a plugin instead.
     implementation("org.markdownj:markdownj:0.3.0-1.0.2b4")
 
+    // TODO Is only be needed by the CLI.
+    implementation("org.jline:jline:3.28.0")
+
     testImplementation(platform("org.junit:junit-bom:5.11.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
