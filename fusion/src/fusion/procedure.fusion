@@ -186,43 +186,84 @@ Equivalent to `(lambda () body ...)`.
 See also [`|`](fusion/procedure.html#|).
     ''' thunk)
 
-  (defpub (compose p1 p2)
+  (defpub compose
     '''
-Returns a procedure that first applies `p2` to its (single) argument, and then
-applies `p1` to the (single) result.
+    (compose p1 ...+)
+
+Returns a procedure that first applies the rightmost procedure to its (single) argument, and then
+applies the next most right to its single result, and so on until all procedures have been applied.
+
+When run with 1 argument, it returns a procedure equivalent to its single argument `p1`.
+
+When run with 0 arguments, it returns a procedure equivalent to `identity`.
+
+    ((compose) "foo")                                                   --> "foo"
+    ((compose string_to_upper) "foo")                                   --> "FOO"
+    ((compose string_is_upper string_to_upper) "foo")                   --> true
+    ((compose string_is_upper string_to_lower string_to_upper) "foo")   --> false
     '''
-    (lambda (x)
-      (p1 (p2 x))))
+    (lambda args
+      (if (not (is_pair args))
+        identity
+        (lambda (x) ((unsafe_pair_head args) ((apply compose (unsafe_pair_tail args)) x))))))
 
   //==========================================================================
 
   // Name comes from Dylan.
-  (defpub (conjoin p1 p2)
+  (defpub conjoin
     '''
+    (conjoin p1 ...+)
+
 Returns a single-argument predicate that is the conjunction of the
-single-argument predicates `p1` and `p2` as with `and`, applying them left to
+single-argument predicates passed as arguments with `and`, applying them left to
 right until one returns an untruthy value.
 
 In other words, the result is similar to using `and` to compose calls to the
 predicates.
+
+When run with 1 argument, it returns a procedure equivalent to its single argument `p1`.
+
+When run with 0 arguments, it returns a procedure that always evaluates to `true`.
+
+    ((conjoin) 1)                                           --> true
+    ((conjoin is_string) "foo")                             --> true
+    ((conjoin is_string string_is_upper) "foo")             --> false
+    ((conjoin is_truthy is_string string_is_lower) "foo")   --> true
+
     '''
-    (lambda (x)
-      (and (p1 x) (p2 x))))
+    (lambda args
+      (if (not (is_pair args))
+        (lambda (x) true)
+        (lambda (x) (and ((unsafe_pair_head args) x) ((apply conjoin (unsafe_pair_tail args)) x))))))
 
   //==========================================================================
 
   // Name comes from Dylan.
-  (defpub (disjoin p1 p2)
+  (defpub disjoin
     '''
+    (disjoin p1 ...+)
+
 Returns a single-argument predicate that is the disjunction of the
-single-argument predicates `p1` and `p2` as with `or`, applying them left to
+single-argument predicates passed as arguments with `or`, applying them left to
 right until one returns a truthy value.
 
 In other words, the result is similar to using `or` to compose calls to the
 predicates.
+
+When run with 1 argument, it returns a procedure equivalent to its single argument `p1`.
+
+When run with 0 arguments, it returns a procedure that always evaluates to false.
+
+    ((disjoin) 1)                                  --> false
+    ((disjoin is_string) "foo")                    --> true
+    ((disjoin is_string string_is_upper) "foo")    --> true
+    ((disjoin is_int is_decimal is_float) "foo")   --> false
+
     '''
-    (lambda (x)
-      (or (p1 x) (p2 x))))
+    (lambda args
+      (if (not (is_pair args))
+        (lambda (x) false)
+        (lambda (x) (or ((unsafe_pair_head args) x) ((apply disjoin (unsafe_pair_tail args)) x))))))
 
   //==========================================================================
 

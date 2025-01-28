@@ -39,42 +39,69 @@
 
 (check === [46] ((compose list (always 46)) 22))
 (check === [47] ((compose identity list) 47))
+(check === [48] ((compose list (always 48) (always 46)) 22))
+(check === [49] ((compose identity list (lambda (i) (+ i 2))) 47))
 
 (define add1 (lambda (x) (+ x 1)))
 (define add2 (compose add1 add1))
 (define add3 (compose add1 add2))
+(define double (lambda (x) (* x 2)))
 (check === 7 (add3 4))
+(check === 4 ((compose double add2 double) 0))
+(check === 2 ((compose  add2 double double) 0))
+(check === 8 ((compose  add2 double add3) 0))
 
 (define list1 (compose list_from_iterator value_iterator))
 (check === [12] (list1 12))
 
+// 0 arguments
+(check === 64 ((compose) 64))
+
+// 1 argument
+(check === 66 ((compose add2) 64))
+(check === 128 ((compose double) 64))
 
 //==========================================================================
 // conjoin
 
-(define is_zero (conjoin is_int (lambda (i) (= i 0))))
+(define is_zero (conjoin is_truthy is_int (lambda (i) (= i 0))))
 (check_true  (is_zero 0))
 (check_false (is_zero 1))
 (check_false (is_zero 0.))
+(check_false (is_zero null.int))
 
 // Ensure extra predicates aren't called
-(check_false ((conjoin (always false) boom) true))
+(check_false ((conjoin (always true) (always false) boom) true))
+
+// 0 arguments
+(check_true ((conjoin) false))
+
+// 1 argument
+(check_true ((conjoin is_int) 4))
+(check_false ((conjoin is_int) "hi"))
 
 
 //==========================================================================
 // disjoin
 
-(define is_num (disjoin is_int is_decimal))
+(define is_num (disjoin is_int is_decimal is_float))
 (check_true  (is_num 0))
 (check_true  (is_num 1))
 (check_true  (is_num 1.23))
 (check_true  (is_num 0.))
+(check_true  (is_num 0.5e0))
 (check_false (is_num "1"))
 (check_false (is_num 2012-11-15))
 
 // Ensure extra predicates aren't called
-(check_true ((disjoin is_int boom) 1))
+(check_true ((disjoin (always false) is_int boom) 1))
 
+// 0 arguments
+(check_false ((disjoin) true))
+
+// 1 argument
+(check_true ((disjoin is_int) 4))
+(check_false ((disjoin is_int) "hi"))
 
 //==========================================================================
 // negate
