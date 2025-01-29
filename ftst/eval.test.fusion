@@ -46,6 +46,9 @@
 (check == (eval (quote_syntax (+ top 2)) ns) 17222)
 (check == (eval (sexp (quote +) (quote_syntax top) 2) ns) 17222)
 
+// TODO #135 eval should NOT observe existing top-level bindings.
+(define top_value 959)
+(expect_syntax_error (eval (quote_syntax top_value) ns))
 
 
 //==========================================================================

@@ -11,6 +11,10 @@
 (define top 17110)
 
 (check-eq?
+  (eval (quote-syntax top))
+  17110)
+
+(check-eq?
   (eval (quote-syntax (+ top 2)) ns)
   17222)
 
