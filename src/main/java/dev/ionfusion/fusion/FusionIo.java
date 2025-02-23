@@ -16,6 +16,7 @@ import com.amazon.ion.IonReader;
 import com.amazon.ion.IonValue;
 import com.amazon.ion.IonWriter;
 import com.amazon.ion.system.IonTextWriterBuilder;
+import dev.ionfusion.embed.TopLevel;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;

@@ -5,6 +5,8 @@ package dev.ionfusion.fusion;
 
 import static dev.ionfusion.fusion.FusionBool.falseBool;
 import static dev.ionfusion.fusion.FusionBool.trueBool;
+
+import dev.ionfusion.embed.TopLevel;
 import dev.ionfusion.fusion.FusionBool.BaseBool;
 
 

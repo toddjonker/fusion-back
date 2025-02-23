@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.amazon.ion.IonCatalog;
 import com.amazon.ion.system.SimpleCatalog;
+import dev.ionfusion.embed.FusionRuntime;
+import dev.ionfusion.embed.TopLevel;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -251,7 +253,7 @@ public class FusionRuntimeBuilderTest
         throws FusionException
     {
         FusionRuntimeBuilder b = standard();
-        FusionRuntime r = build(b);
+        FusionRuntime        r = build(b);
         assertThat(r.getDefaultIonCatalog(), instanceOf(SimpleCatalog.class));
 
         SimpleCatalog catalog = new SimpleCatalog();

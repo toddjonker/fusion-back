@@ -8,6 +8,8 @@ import static dev.ionfusion.fusion.FusionBool.makeBool;
 import static dev.ionfusion.fusion.FusionString.checkRequiredStringArg;
 import static dev.ionfusion.fusion.FusionString.makeString;
 import static dev.ionfusion.fusion.SimpleSyntaxValue.makeSyntax;
+
+import dev.ionfusion.embed.TopLevel;
 import dev.ionfusion.fusion.FusionBool.BaseBool;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

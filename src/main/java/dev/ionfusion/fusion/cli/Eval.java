@@ -3,7 +3,7 @@
 
 package dev.ionfusion.fusion.cli;
 
-import dev.ionfusion.fusion.TopLevel;
+import dev.ionfusion.embed.TopLevel;
 
 
 class Eval

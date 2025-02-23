@@ -5,6 +5,8 @@ package dev.ionfusion.fusion;
 
 import static dev.ionfusion.fusion.FusionUtils.EMPTY_STRING_ARRAY;
 import static dev.ionfusion.fusion.GlobalState.FUSION_SOURCE_EXTENSION;
+
+import dev.ionfusion.embed.FusionRuntime;
 import dev.ionfusion.fusion.FusionSymbol.BaseSymbol;
 import java.io.File;
 import java.io.IOException;

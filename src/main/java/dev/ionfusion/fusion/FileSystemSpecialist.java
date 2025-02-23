@@ -3,6 +3,7 @@
 
 package dev.ionfusion.fusion;
 
+import dev.ionfusion.embed.FusionRuntime;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

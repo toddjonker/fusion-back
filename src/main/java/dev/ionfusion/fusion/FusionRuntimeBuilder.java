@@ -7,6 +7,8 @@ import static dev.ionfusion.fusion.ModuleIdentity.isValidAbsoluteModulePath;
 import static dev.ionfusion.fusion._Private_CoverageCollectorImpl.fromDirectory;
 import com.amazon.ion.IonCatalog;
 import com.amazon.ion.system.SimpleCatalog;
+import dev.ionfusion.embed.FusionRuntime;
+import dev.ionfusion.embed.TopLevel;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.URL;

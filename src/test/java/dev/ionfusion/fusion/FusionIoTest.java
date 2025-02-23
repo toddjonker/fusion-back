@@ -14,6 +14,7 @@ import com.amazon.ion.IonList;
 import com.amazon.ion.IonReader;
 import com.amazon.ion.IonValue;
 import com.amazon.ion.IonWriter;
+import dev.ionfusion.embed.TopLevel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -146,7 +147,7 @@ public class FusionIoTest
     private void writeInjectedDom(String ion)
         throws Exception
     {
-        TopLevel  top  = topLevel();
+        TopLevel top = topLevel();
 
         IonValue iv = system().singleValue(INJECTION_SAMPLE);
         Object fv = top.call("identity", iv);  // inject the value

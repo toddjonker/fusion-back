@@ -6,7 +6,10 @@ package dev.ionfusion.fusion;
 import static dev.ionfusion.fusion.FusionVoid.voidValue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
+
 import com.amazon.ion.IonReader;
+import dev.ionfusion.embed.ModuleBuilder;
+import dev.ionfusion.embed.TopLevel;
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -64,7 +67,7 @@ public class InterruptionTest
         useTstRepo();
 
         RequestInterruptProc latchProc = new RequestInterruptProc();
-        ModuleBuilder mb = runtime().makeModuleBuilder(INTERRUPT_MODULE);
+        ModuleBuilder        mb        = runtime().makeModuleBuilder(INTERRUPT_MODULE);
         mb.define("ready_for_interrupt", latchProc);
         mb.instantiate();
 

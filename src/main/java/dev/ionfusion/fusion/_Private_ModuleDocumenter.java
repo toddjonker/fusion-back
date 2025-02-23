@@ -10,6 +10,7 @@ import static dev.ionfusion.fusion.ModuleDoc.buildDocTree;
 
 import com.amazon.ion.Timestamp;
 import com.petebevin.markdown.MarkdownProcessor;
+import dev.ionfusion.embed.FusionRuntime;
 import dev.ionfusion.fusion.ModuleDoc.Filter;
 import java.io.File;
 import java.io.FileInputStream;

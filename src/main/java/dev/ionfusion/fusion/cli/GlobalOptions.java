@@ -4,7 +4,7 @@
 package dev.ionfusion.fusion.cli;
 
 import dev.ionfusion.fusion.FusionException;
-import dev.ionfusion.fusion.FusionRuntime;
+import dev.ionfusion.embed.FusionRuntime;
 import dev.ionfusion.fusion.FusionRuntimeBuilder;
 import dev.ionfusion.fusion._Private_Trampoline;
 import com.amazon.ion.IonException;

@@ -6,7 +6,7 @@ package dev.ionfusion.fusion.cli;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import dev.ionfusion.fusion.ExitException;
 import dev.ionfusion.fusion.FusionException;
-import dev.ionfusion.fusion.TopLevel;
+import dev.ionfusion.embed.TopLevel;
 import com.amazon.ion.IonException;
 import java.io.BufferedReader;
 import java.io.Console;

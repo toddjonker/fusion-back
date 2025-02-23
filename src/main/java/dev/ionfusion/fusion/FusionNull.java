@@ -6,6 +6,8 @@ package dev.ionfusion.fusion;
 import static dev.ionfusion.fusion.FusionBool.makeBool;
 import static dev.ionfusion.fusion.FusionSymbol.BaseSymbol.internSymbols;
 import static dev.ionfusion.fusion.SimpleSyntaxValue.makeSyntax;
+
+import dev.ionfusion.embed.TopLevel;
 import dev.ionfusion.fusion.FusionBool.BaseBool;
 import dev.ionfusion.fusion.FusionSymbol.BaseSymbol;
 import com.amazon.ion.IonException;

@@ -9,6 +9,8 @@ import static dev.ionfusion.fusion.FusionBool.trueBool;
 import static dev.ionfusion.fusion.FusionIo.safeWriteToString;
 import static dev.ionfusion.fusion.FusionSymbol.BaseSymbol.unsafeSymbolsToJavaStrings;
 import static dev.ionfusion.fusion.FusionValue.sameAnnotations;
+
+import dev.ionfusion.embed.FusionRuntime;
 import dev.ionfusion.fusion.FusionBool.BaseBool;
 import dev.ionfusion.fusion.FusionSymbol.BaseSymbol;
 import com.amazon.ion.IonException;

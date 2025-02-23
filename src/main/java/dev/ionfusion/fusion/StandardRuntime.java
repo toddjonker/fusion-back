@@ -9,12 +9,17 @@ import static dev.ionfusion.fusion.GlobalState.KERNEL_MODULE_IDENTITY;
 import static dev.ionfusion.fusion.ModuleIdentity.forAbsolutePath;
 import static dev.ionfusion.fusion.ModuleIdentity.isValidAbsoluteModulePath;
 import static java.lang.Boolean.TRUE;
+
 import com.amazon.ion.IonCatalog;
 import com.amazon.ion.IonReader;
 import com.amazon.ion.IonSystem;
 import com.amazon.ion.IonValue;
 import com.amazon.ion.ValueFactory;
 import com.amazon.ion.system.IonSystemBuilder;
+import dev.ionfusion.embed.FusionRuntime;
+import dev.ionfusion.embed.ModuleBuilder;
+import dev.ionfusion.embed.SandboxBuilder;
+import dev.ionfusion.embed.TopLevel;
 import java.io.OutputStream;
 
 

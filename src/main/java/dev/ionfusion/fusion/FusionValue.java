@@ -7,6 +7,9 @@ import static dev.ionfusion.fusion.FusionBool.falseBool;
 import static dev.ionfusion.fusion.FusionSymbol.BaseSymbol.internSymbols;
 import static dev.ionfusion.fusion.FusionUtils.EMPTY_OBJECT_ARRAY;
 import static dev.ionfusion.fusion.FusionUtils.EMPTY_STRING_ARRAY;
+
+import dev.ionfusion.embed.FusionRuntime;
+import dev.ionfusion.embed.TopLevel;
 import dev.ionfusion.fusion.FusionBool.BaseBool;
 import dev.ionfusion.fusion.FusionSymbol.BaseSymbol;
 import com.amazon.ion.IonValue;

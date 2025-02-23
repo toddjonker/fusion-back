@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
 import com.amazon.ion.IonInt;
 import com.amazon.ion.IonReader;
 import com.amazon.ion.IonValue;
@@ -20,6 +21,7 @@ import com.amazon.ion.IonWriter;
 import com.amazon.ion.SymbolTable;
 import com.amazon.ion.system.IonBinaryWriterBuilder;
 import com.amazon.ion.system.SimpleCatalog;
+import dev.ionfusion.embed.ModuleBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;

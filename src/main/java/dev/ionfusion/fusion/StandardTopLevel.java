@@ -9,6 +9,7 @@ import static dev.ionfusion.fusion.ModuleIdentity.isValidAbsoluteModulePath;
 import static dev.ionfusion.fusion.StandardReader.readSyntax;
 import static com.amazon.ion.util.IonTextUtils.printQuotedSymbol;
 import com.amazon.ion.IonReader;
+import dev.ionfusion.embed.TopLevel;
 import java.io.File;
 import java.io.IOException;
 

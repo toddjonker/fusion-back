@@ -24,6 +24,8 @@ import static java.lang.Character.highSurrogate;
 import static java.lang.Character.isSupplementaryCodePoint;
 import static java.lang.Character.lowSurrogate;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
+import dev.ionfusion.embed.TopLevel;
 import dev.ionfusion.fusion.FusionBool.BaseBool;
 import dev.ionfusion.fusion.FusionSymbol.BaseSymbol;
 import dev.ionfusion.fusion.FusionText.BaseText;

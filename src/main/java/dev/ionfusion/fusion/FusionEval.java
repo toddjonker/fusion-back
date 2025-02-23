@@ -10,6 +10,7 @@ import static dev.ionfusion.fusion.GlobalState.MODULE;
 import static dev.ionfusion.fusion.StandardReader.readSyntax;
 import static dev.ionfusion.fusion.Syntax.datumToSyntax;
 import com.amazon.ion.IonReader;
+import dev.ionfusion.embed.TopLevel;
 import java.util.LinkedList;
 
 
@@ -320,7 +321,7 @@ final class FusionEval
      * @param receiver is a 1-argument procedure that accepts a fully-expanded
      *   syntax object or EOF.
      */
-    static void expandProgram(TopLevel        top,
+    static void expandProgram(TopLevel top,
                               String          source,
                               SourceName      name,
                               final Procedure receiver)

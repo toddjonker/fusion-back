@@ -6,6 +6,8 @@ package dev.ionfusion.fusion;
 import static dev.ionfusion.fusion.FusionBool.falseBool;
 import static dev.ionfusion.fusion.FusionBool.makeBool;
 import static dev.ionfusion.fusion.FusionSymbol.BaseSymbol.internSymbols;
+
+import dev.ionfusion.embed.TopLevel;
 import dev.ionfusion.fusion.FusionBool.BaseBool;
 import dev.ionfusion.fusion.FusionLob.BaseLob;
 import dev.ionfusion.fusion.FusionSymbol.BaseSymbol;

@@ -6,7 +6,7 @@ import static dev.ionfusion.fusion.CoreTestCase.fusionBootstrapDirectory;
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import dev.ionfusion.fusion.FusionException;
-import dev.ionfusion.fusion.FusionRuntime;
+import dev.ionfusion.embed.FusionRuntime;
 import dev.ionfusion.fusion.FusionRuntimeBuilder;
 import java.net.URI;
 import java.nio.file.Files;

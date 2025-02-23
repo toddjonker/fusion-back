@@ -24,6 +24,8 @@ import static com.amazon.ion.Timestamp.forMonth;
 import static com.amazon.ion.Timestamp.forSecond;
 import static com.amazon.ion.Timestamp.forYear;
 import static com.amazon.ion.util.IonTextUtils.isDigit;
+
+import dev.ionfusion.embed.TopLevel;
 import dev.ionfusion.fusion.FusionBool.BaseBool;
 import dev.ionfusion.fusion.FusionNumber.BaseDecimal;
 import dev.ionfusion.fusion.FusionSymbol.BaseSymbol;
