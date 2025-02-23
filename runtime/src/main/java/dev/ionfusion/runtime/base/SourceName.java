@@ -18,6 +18,7 @@ import java.nio.file.Path;
  * for error reporting to users.
  */
 public class SourceName
+    implements ResourceName
 {
     /**
      * The standard extension for Fusion source code files.
@@ -38,6 +39,7 @@ public class SourceName
      *
      * @return the displayable name of this source
      */
+    @Override
     public String display()
     {
         return myDisplay;
@@ -61,6 +63,7 @@ public class SourceName
      *
      * @return null if this source is not an actual file.
      */
+    @Override
     public Path getPath()
     {
         return null;
@@ -73,6 +76,7 @@ public class SourceName
      *
      * @return null if this source cannot be identified as a URL.
      */
+    @Override
     public URL getUrl()
     {
         return null;

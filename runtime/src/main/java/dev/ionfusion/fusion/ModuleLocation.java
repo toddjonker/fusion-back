@@ -5,6 +5,7 @@ package dev.ionfusion.fusion;
 
 import com.amazon.ion.IonReader;
 import dev.ionfusion.runtime.base.ModuleIdentity;
+import dev.ionfusion.runtime.base.ResourceName;
 import dev.ionfusion.runtime.base.SourceName;
 import java.io.File;
 import java.io.IOException;
@@ -70,7 +71,7 @@ abstract class ModuleLocation
     @Override
     public String toString()
     {
-        SourceName name = sourceName();
+        ResourceName name = sourceName();
         return (name == null ? super.toString() : name.toString());
     }
 

@@ -98,7 +98,7 @@ public class SourceLocationTest
         assertEquals(column, loc.getColumn(), "column");
         assertEquals(offset, loc.getStartOffset(), "offset");
 
-        SourceName name = loc.getSourceName();
+        ResourceName name = loc.getSourceName();
         if (display == null)
         {
             display = "unknown location";

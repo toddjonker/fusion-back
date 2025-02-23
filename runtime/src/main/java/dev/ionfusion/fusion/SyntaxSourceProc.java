@@ -8,8 +8,8 @@ import static dev.ionfusion.fusion.FusionSyntax.checkSyntaxArg;
 import static dev.ionfusion.fusion.FusionVoid.voidValue;
 
 import dev.ionfusion.runtime.base.FusionException;
+import dev.ionfusion.runtime.base.ResourceName;
 import dev.ionfusion.runtime.base.SourceLocation;
-import dev.ionfusion.runtime.base.SourceName;
 
 
 class SyntaxSourceProc
@@ -23,7 +23,7 @@ class SyntaxSourceProc
         SourceLocation location = stx.getLocation();
         if (location != null)
         {
-            SourceName name = location.getSourceName();
+            ResourceName name = location.getSourceName();
             if (name != null)
             {
                 return makeString(eval, name.display());
