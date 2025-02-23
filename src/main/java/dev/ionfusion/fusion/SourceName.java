@@ -14,6 +14,7 @@ import java.nio.file.Path;
  * for error reporting to users.
  */
 public class SourceName
+    implements dev.ionfusion.embed.ResourceName
 {
     private final String myDisplay;
 
@@ -76,6 +77,7 @@ public class SourceName
      *
      * @return the displayable name of this source
      */
+    @Override
     public String display()
     {
         return myDisplay;
@@ -94,6 +96,7 @@ public class SourceName
         return null;
     }
 
+    @Override
     public Path getPath()
     {
         File f = getFile();

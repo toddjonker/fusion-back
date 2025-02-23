@@ -16,6 +16,7 @@ import com.amazon.ion.Span;
 import com.amazon.ion.SpanProvider;
 import com.amazon.ion.Timestamp;
 import com.amazon.ion.system.IonSystemBuilder;
+import dev.ionfusion.embed.ResourceName;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -151,11 +152,11 @@ public final class _Private_CoverageWriter
     private final CoverageDatabase                  myDatabase;
     private final CoverageConfiguration             myConfig;
     private final Set<ModuleIdentity>               myModules;
-    private final Set<File>                         mySourceFiles;
-    private final Map<ModuleIdentity, SourceName>   myNamesForModules;
-    private final Map<File, SourceName>             myNamesForFiles;
-    private final Map<SourceName, CoverageInfoPair> myFileCoverages;
-    private final Map<SourceName, String>           myRelativeNamesForSources;
+    private final Set<File>                           mySourceFiles;
+    private final Map<ModuleIdentity, ResourceName>   myNamesForModules;
+    private final Map<File, ResourceName>             myNamesForFiles;
+    private final Map<ResourceName, CoverageInfoPair> myFileCoverages;
+    private final Map<ResourceName, String>           myRelativeNamesForSources;
 
     private final CoverageInfoPair myGlobalCoverage = new CoverageInfoPair();
     private       long             myUnloadedEntries;
@@ -241,13 +242,13 @@ public final class _Private_CoverageWriter
      *   avoid exposing details of the build-time environment.  This suggests
      *   that {@code SourceName} should track the repository holding the source.
      *
-     * @param sourceNames must not be null.
+     * @param resourceNames must not be null.
      */
-    private int commonPrefixLen(Set<SourceName> sourceNames)
+    private int commonPrefixLen(Set<ResourceName> resourceNames)
         throws IOException
     {
         Path prefix = null;
-        for (SourceName sourceName : sourceNames)
+        for (SourceName sourceName : resourceNames)
         {
             // Skip URL-based sources.
             File file = sourceName.getFile();
@@ -270,10 +271,10 @@ public final class _Private_CoverageWriter
     private void prepareRelativeNames()
         throws IOException
     {
-        Set<SourceName> sourceNames = myDatabase.sourceNames();
-        int prefixLen = commonPrefixLen(sourceNames);
+        Set<ResourceName> resourceNames = myDatabase.sourceNames();
+        int               prefixLen     = commonPrefixLen(resourceNames);
 
-        for (SourceName sourceName : sourceNames)
+        for (SourceName sourceName : resourceNames)
         {
             // TODO Determine this on demand, it's only needed twice per source.
             //      so this code is more complicated than its worth.
@@ -327,7 +328,7 @@ public final class _Private_CoverageWriter
                 {
                     myModules.add(id);
 
-                    SourceName prior = myNamesForModules.put(id, sourceName);
+                    ResourceName prior = myNamesForModules.put(id, sourceName);
                     assert prior == null || prior == sourceName :
                         "SourceName instance has changed for module " + id;
                 }
@@ -338,7 +339,7 @@ public final class _Private_CoverageWriter
                     {
                         mySourceFiles.add(f);
 
-                        SourceName prior = myNamesForFiles.put(f, sourceName);
+                        ResourceName prior = myNamesForFiles.put(f, sourceName);
                         assert prior == null || prior == sourceName :
                             "SourceName instance has changed for file " + f +
                                 "\nThis can happen if you `load` a module's file " +
@@ -592,7 +593,7 @@ public final class _Private_CoverageWriter
     private <T> void renderRows(HtmlWriter         indexHtml,
                                 String             category,
                                 T[]                keys,
-                                Map<T, SourceName> keyToNames)
+                                Map<T, ResourceName> keyToNames)
         throws IOException
     {
         long totalExpressions = 0;

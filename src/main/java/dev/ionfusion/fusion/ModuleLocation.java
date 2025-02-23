@@ -4,6 +4,7 @@
 package dev.ionfusion.fusion;
 
 import com.amazon.ion.IonReader;
+import dev.ionfusion.embed.ResourceName;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,7 +69,7 @@ abstract class ModuleLocation
     @Override
     public String toString()
     {
-        SourceName name = sourceName();
+        ResourceName name = sourceName();
         return (name == null ? super.toString() : name.toString());
     }
 

@@ -6,6 +6,8 @@ package dev.ionfusion.fusion;
 import static dev.ionfusion.fusion.FusionString.makeString;
 import static dev.ionfusion.fusion.FusionVoid.voidValue;
 
+import dev.ionfusion.embed.ResourceName;
+
 
 class SyntaxSourceProc
     extends Procedure1
@@ -18,7 +20,7 @@ class SyntaxSourceProc
         SourceLocation location = stx.getLocation();
         if (location != null)
         {
-            SourceName name = location.getSourceName();
+            ResourceName name = location.getSourceName();
             if (name != null)
             {
                 return makeString(eval, name.display());

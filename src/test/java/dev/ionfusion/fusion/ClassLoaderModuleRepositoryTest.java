@@ -8,7 +8,9 @@ import static dev.ionfusion.fusion.FusionSexp.isPair;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.amazon.ion.IonReader;
+import dev.ionfusion.embed.ResourceName;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -42,7 +44,7 @@ public class ClassLoaderModuleRepositoryTest
         assertNotNull(loc);
         assertNotNull(loc.toString());
 
-        SourceName name = loc.sourceName();
+        ResourceName name = loc.sourceName();
         assertTrue(name.display().contains("/ftst/symbol.fusion"));
 
         Evaluator eval       = evaluator();

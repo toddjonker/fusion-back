@@ -6,12 +6,14 @@ package dev.ionfusion.fusion;
 import static com.amazon.ion.IonType.LIST;
 import static com.amazon.ion.IonType.STRING;
 import static com.amazon.ion.IonType.STRUCT;
+
 import com.amazon.ion.IonReader;
 import com.amazon.ion.IonSystem;
 import com.amazon.ion.IonType;
 import com.amazon.ion.IonWriter;
 import com.amazon.ion.system.IonSystemBuilder;
 import com.amazon.ion.system.IonTextWriterBuilder;
+import dev.ionfusion.embed.ResourceName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -45,16 +47,16 @@ import java.util.Set;
 class CoverageDatabase
 {
     private static final class SourceNameComparator
-        implements Comparator<SourceName>
+        implements Comparator<ResourceName>
     {
         @Override
-        public int compare(SourceName a, SourceName b)
+        public int compare(ResourceName a, ResourceName b)
         {
             return a.display().compareTo(b.display());
         }
     }
 
-    static final Comparator<SourceName> SRCNAME_COMPARE =
+    static final Comparator<ResourceName> SRCNAME_COMPARE =
         new SourceNameComparator();
 
 
@@ -176,13 +178,13 @@ class CoverageDatabase
 
 
     // TODO Collect this eagerly
-    synchronized Set<SourceName> sourceNames()
+    synchronized Set<ResourceName> sourceNames()
     {
-        Set<SourceName> names = new HashSet<>();
+        Set<ResourceName> names = new HashSet<>();
 
         for (SourceLocation loc : myLocations.keySet())
         {
-            SourceName name = loc.getSourceName();
+            ResourceName name = loc.getSourceName();
             if (name != null)
             {
                 names.add(name);
@@ -193,11 +195,11 @@ class CoverageDatabase
     }
 
 
-    SourceName[] sortedNames()
+    ResourceName[] sortedNames()
     {
-        Set<SourceName> sourceSet = sourceNames();
+        Set<ResourceName> sourceSet = sourceNames();
 
-        SourceName[] sourceArray = sourceSet.toArray(new SourceName[0]);
+        ResourceName[] sourceArray = sourceSet.toArray(new ResourceName[0]);
 
         Arrays.sort(sourceArray, SRCNAME_COMPARE);
 

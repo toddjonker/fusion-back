@@ -80,7 +80,7 @@ public interface TopLevel
      * Top-level {@code define} forms will alter the environment and will be
      * visible to later calls.
      * <p>
-     * {@link #eval(IonReader,SourceName)} should be preferred to this method,
+     * {@link #eval(IonReader, ResourceName)} should be preferred to this method,
      * since it can provide better error reporting.
      *
      * @param source Fusion source code, in Ion data format. Must not be null.
@@ -92,7 +92,7 @@ public interface TopLevel
      *
      * @throws FusionException if an error occurs during evaluation
      *
-     * @see #eval(IonReader,SourceName)
+     * @see #eval(IonReader, ResourceName)
      */
     Object eval(IonReader source)
         throws FusionException;
@@ -121,7 +121,7 @@ public interface TopLevel
      * Top-level {@code define} forms will alter the environment and will be
      * visible to later calls.
      * <p>
-     * {@link #eval(String,SourceName)} should be preferred to this method,
+     * {@link #eval(String, ResourceName)} should be preferred to this method,
      * since it can provide better error reporting.
      *
      * @param source Fusion source code, in Ion data format. Must not be null.
@@ -132,7 +132,7 @@ public interface TopLevel
      *
      * @throws FusionException if an error occurs during evaluation
      *
-     * @see #eval(String,SourceName)
+     * @see #eval(String, ResourceName)
      */
     Object eval(String source)
         throws FusionException;

@@ -6,10 +6,12 @@ package dev.ionfusion.fusion;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+
 import com.amazon.ion.IonDatagram;
 import com.amazon.ion.IonReader;
 import com.amazon.ion.IonSystem;
 import com.amazon.ion.system.IonSystemBuilder;
+import dev.ionfusion.embed.ResourceName;
 import org.junit.jupiter.api.Test;
 
 
@@ -97,7 +99,7 @@ public class SourceLocationTest
         assertEquals(column, loc.getColumn(), "column");
         assertEquals(offset, loc.getStartOffset(), "offset");
 
-        SourceName name = loc.getSourceName();
+        ResourceName name = loc.getSourceName();
         if (display == null)
         {
             display = "unknown location";
