@@ -1075,7 +1075,7 @@ final class FusionStruct
          * Unlike {@link #ionize} and {@link #copyToIonValue}, here we route
          * through {@link #getMap} rather than writing any lazily-injected
          * IonStruct directly. That's to ensure that the output looks the same
-         * in both cases.
+         * in both cases. FIXME I don't think that's accurate
          */
         @Override
         public void write(Evaluator eval, Appendable out)
@@ -1327,6 +1327,7 @@ final class FusionStruct
             IonStruct s = getIonStruct();
             if (s != null)
             {
+                @SuppressWarnings("deprecation")
                 IonWriter iw = WRITER_BUILDER.build(out);
                 s.writeTo(iw);
                 iw.finish();

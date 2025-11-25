@@ -1190,6 +1190,7 @@ final class FusionList
             {
                 if (myValues[0] instanceof IonValue)
                 {
+                    @SuppressWarnings("deprecation")
                     IonWriter iw = WRITER_BUILDER.build(out);
                     ionize(eval, iw);
                     iw.finish();
