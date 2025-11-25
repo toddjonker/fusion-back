@@ -1094,6 +1094,10 @@ final class FusionList
         }
     }
 
+
+    /**
+     * TODO PERF synchronization here is too coarse; the struct version is better.
+     */
     private static final class LazyInjectingList
         extends ImmutableList
     {

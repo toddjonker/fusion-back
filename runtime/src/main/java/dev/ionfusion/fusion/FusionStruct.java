@@ -1868,7 +1868,9 @@ final class FusionStruct
                 return empty(eval);
             }
 
+            @SuppressWarnings("deprecation")
             Iterator<?> fieldIterator = unsafeJavaIterate(eval, names);
+            @SuppressWarnings("deprecation")
             Iterator<?> valueIterator = unsafeJavaIterate(eval, values);
 
             FusionStruct.Builder builder = FusionStruct.builder(eval);
