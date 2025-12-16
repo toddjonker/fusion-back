@@ -26,7 +26,7 @@ class StandardValueSpace
     private static final
     InternMap<Object, Object> ourInternedValues = new InternMap<>(o -> o, 256);
 
-    // TODO PERF: Perhaps add expungeStaleEntries() to force GC of intern tables.
+    // TODO PERF: Perhaps add a method to sweep the intern tables.
     // Because entries are only purged on access, we could end up with
     // a bunch of garbage in there after code compilation is done, and unless
     // new symbols are instantiated there won't be any access to the map and no
@@ -35,7 +35,7 @@ class StandardValueSpace
 
 
     @SuppressWarnings("unchecked")
-    <T> T intern(T value)
+    public <T> T intern(T value)
     {
         return (T) ourInternedValues.intern(value);
     }
