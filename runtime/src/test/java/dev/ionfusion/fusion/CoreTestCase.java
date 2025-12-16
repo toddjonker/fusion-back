@@ -133,6 +133,15 @@ public class CoreTestCase
         return top.getEvaluator();
     }
 
+    /**
+     * For use only in testing internal APIs.
+     */
+    protected StandardValueSpace vspace()
+        throws FusionException
+    {
+        return evaluator().vspace();
+    }
+
 
     //========================================================================
     // Basic evaluation

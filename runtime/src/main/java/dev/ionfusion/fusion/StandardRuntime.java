@@ -19,6 +19,7 @@ import java.io.OutputStream;
 final class StandardRuntime
     implements FusionRuntime
 {
+    private final StandardValueSpace myVspace = new StandardValueSpace();
     private final GlobalState      myGlobalState;
     private final ModuleRegistry   myRegistry;
     private final String           myDefaultLanguage;
@@ -41,10 +42,10 @@ final class StandardRuntime
             // This is the bootstrap top-level namespace, which starts out
             // empty.  It becomes the initial value of current_namespace
             // during global initialization.
-            Namespace topNs = new TopLevelNamespace(myRegistry);
+            Namespace topNs = new TopLevelNamespace(myVspace, myRegistry);
 
             myGlobalState =
-                GlobalState.initialize(ionSystem, builder, myRegistry, topNs);
+                GlobalState.initialize(ionSystem, builder, myVspace, myRegistry, topNs);
 
             myTopLevel = makeTopLevel(topNs, myDefaultLanguage);
         }
@@ -128,7 +129,7 @@ final class StandardRuntime
                                   String initialModulePath)
         throws FusionException
     {
-        return makeTopLevel(new TopLevelNamespace(registry), initialModulePath);
+        return makeTopLevel(new TopLevelNamespace(myVspace, registry), initialModulePath);
     }
 
     @Override
@@ -183,7 +184,8 @@ final class StandardRuntime
         }
 
         ModuleIdentity id = forAbsolutePath(absoluteModulePath);
-        return new ModuleBuilderImpl(myGlobalState.myModuleNameResolver,
+        return new ModuleBuilderImpl(myGlobalState.myVspace,
+                                     myGlobalState.myModuleNameResolver,
                                      myRegistry,
                                      id);
     }
@@ -280,7 +282,7 @@ final class StandardRuntime
                 ModuleRegistry newRegistry = makeModuleRegistry();
                 newRegistry.attach(resolver, myRegistry, langId);
 
-                TopLevelNamespace namespace = new TopLevelNamespace(newRegistry);
+                TopLevelNamespace namespace = new TopLevelNamespace(myVspace, newRegistry);
 
                 return makeTopLevel(namespace,
                                     myLanguage,

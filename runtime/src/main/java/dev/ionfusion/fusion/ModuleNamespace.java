@@ -464,7 +464,7 @@ final class ModuleNamespace
                     ModuleIdentity languageId)
         throws FusionException
     {
-        super(registry, moduleId, MAKE_SYNTAX_WRAPS);
+        super(eval.vspace(), registry, moduleId, MAKE_SYNTAX_WRAPS);
 
         ModuleInstance language = instantiateRequiredModule(eval, languageId);
         for (ProvidedBinding provided : language.providedBindings())
@@ -488,7 +488,7 @@ final class ModuleNamespace
                     ModuleIdentity[] requiredModules)
         throws FusionException
     {
-        super(registry, moduleId, MAKE_SYNTAX_WRAPS);
+        super(eval.vspace(), registry, moduleId, MAKE_SYNTAX_WRAPS);
 
         for (ModuleIdentity m : requiredModules)
         {
@@ -503,9 +503,9 @@ final class ModuleNamespace
      *
      * @param moduleId identifies this module.
      */
-    ModuleNamespace(ModuleRegistry registry, ModuleIdentity moduleId)
+    ModuleNamespace(StandardValueSpace vspace, ModuleRegistry registry, ModuleIdentity moduleId)
     {
-        super(registry, moduleId, MAKE_SYNTAX_WRAPS);
+        super(vspace, registry, moduleId, MAKE_SYNTAX_WRAPS);
     }
 
 

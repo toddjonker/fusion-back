@@ -45,15 +45,17 @@ import java.util.Map;
  */
 class Evaluator
 {
-    private final GlobalState myGlobalState;
-    private final IonSystem mySystem;
-    private final Evaluator myOuterFrame;
+    private final GlobalState         myGlobalState;
+    private final StandardValueSpace  myVspace;
+    private final IonSystem           mySystem;
+    private final Evaluator           myOuterFrame;
     private final Map<Object, Object> myContinuationMarks = new HashMap<>();
 
 
     Evaluator(GlobalState globalState)
     {
         myGlobalState = globalState;
+        myVspace      = globalState.myVspace;
         mySystem      = globalState.myIonSystem;
         myOuterFrame  = null;
     }
@@ -61,6 +63,7 @@ class Evaluator
     Evaluator(Evaluator outerBindings)
     {
         myGlobalState = outerBindings.myGlobalState;
+        myVspace      = outerBindings.myVspace;
         mySystem      = outerBindings.mySystem;
         myOuterFrame  = outerBindings;
     }
@@ -82,6 +85,10 @@ class Evaluator
         return myGlobalState;
     }
 
+    StandardValueSpace vspace()
+    {
+        return myVspace;
+    }
 
     //========================================================================
 

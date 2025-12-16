@@ -198,9 +198,9 @@ final class TopLevelNamespace
      * Constructs a top-level namespace. Any bindings will need to be
      * {@code require}d or {@code define}d.
      */
-    TopLevelNamespace(ModuleRegistry registry)
+    TopLevelNamespace(StandardValueSpace vspace, ModuleRegistry registry)
     {
-        super(registry, ModuleIdentity.forUniqueScope(TOP_LEVEL_MODULE_PREFIX),
+        super(vspace, registry, ModuleIdentity.forUniqueScope(TOP_LEVEL_MODULE_PREFIX),
               new Function<Namespace, SyntaxWraps>()
               {
                   @Override

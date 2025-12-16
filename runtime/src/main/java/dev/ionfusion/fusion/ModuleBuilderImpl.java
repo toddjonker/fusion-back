@@ -22,24 +22,26 @@ final class ModuleBuilderImpl
     /**
      * Prepares to build a module with no language.
      */
-    ModuleBuilderImpl(ModuleNameResolver resolver,
+    ModuleBuilderImpl(StandardValueSpace valueSpace,
+                      ModuleNameResolver resolver,
                       ModuleRegistry registry,
                       ModuleIdentity moduleId)
     {
-        this(resolver, registry, moduleId, null);
+        this(valueSpace, resolver, registry, moduleId, null);
     }
 
     /**
      * @param docs will be modified by the builder.
      */
-    ModuleBuilderImpl(ModuleNameResolver resolver,
+    ModuleBuilderImpl(StandardValueSpace valueSpace,
+                      ModuleNameResolver resolver,
                       ModuleRegistry registry,
                       ModuleIdentity moduleId,
                       IonStruct docs)
     {
         myResolver = resolver;
         myRegistry = registry;
-        myNamespace = new ModuleNamespace(registry, moduleId);
+        myNamespace = new ModuleNamespace(valueSpace, registry, moduleId);
         myDocs = docs;
     }
 
