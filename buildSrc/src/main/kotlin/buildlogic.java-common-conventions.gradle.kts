@@ -30,6 +30,15 @@ java {
     }
 }
 
+// Enable linting, since the build always issues warnings.
+// TODO Trigger this by an environment variable or something?
+//  We don't want it to run all the time, its too noisy at the moment.
+tasks.withType<JavaCompile>() {
+    options.compilerArgumentProviders.add {
+        listOf("-Xlint:deprecation", "-Xlint:unchecked")
+    }
+}
+
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
