@@ -16,7 +16,6 @@ import static dev.ionfusion.fusion.FusionNumber.makeInt;
 import static dev.ionfusion.fusion.FusionNumber.unsafeTruncateIntToJavaInt;
 import static dev.ionfusion.fusion.FusionString.CHAR_TYPES.LOWERCASE;
 import static dev.ionfusion.fusion.FusionString.CHAR_TYPES.UPPERCASE;
-import static dev.ionfusion.fusion.FusionSymbol.makeSymbol;
 import static dev.ionfusion.fusion.FusionText.checkRequiredTextArg;
 import static dev.ionfusion.fusion.FusionVoid.voidValue;
 import static java.lang.Character.highSurrogate;
@@ -687,7 +686,7 @@ public final class FusionString
             throws FusionException
         {
             String input = checkNullableStringArg(eval, this, 0, arg);
-            return makeSymbol(eval, input);
+            return eval.vspace().makeSymbol(input);
         }
     }
 

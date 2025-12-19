@@ -618,7 +618,7 @@ final class ModuleNamespace
 
             // Synthesize an identifier for stack traces.
             BaseSymbol name = ns.getDefinedName(myAddress);
-            SyntaxSymbol id = SyntaxSymbol.make(myLocation, name);
+            SyntaxSymbol id = eval.vspace().makeSyntaxSymbol(name, myLocation);
 
             throw new UnboundIdentifierException(id);
         }

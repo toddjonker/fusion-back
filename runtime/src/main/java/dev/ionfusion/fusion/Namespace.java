@@ -6,7 +6,6 @@ package dev.ionfusion.fusion;
 import static dev.ionfusion.fusion.BindingSite.makeDefineBindingSite;
 import static dev.ionfusion.fusion.BindingSite.makeImportBindingSite;
 import static dev.ionfusion.fusion.FusionIo.safeWriteToString;
-import static dev.ionfusion.fusion.FusionSymbol.makeSymbol;
 import static dev.ionfusion.fusion.FusionVoid.voidValue;
 import static dev.ionfusion.fusion.NamedValue.inferObjectName;
 
@@ -483,7 +482,7 @@ abstract class Namespace
      */
     final Binding resolveMaybe(String name)
     {
-        BaseSymbol symbol = makeSymbol(null, name);
+        BaseSymbol symbol = myVspace.makeActualSymbol(name);
         return resolveMaybe(symbol);
     }
 
@@ -584,9 +583,7 @@ abstract class Namespace
             throw new IllegalArgumentException(message);
         }
 
-        // WARNING: We pass null evaluator because we know its not used.
-        //          That is NOT SUPPORTED for user code!
-        SyntaxSymbol identifier = SyntaxSymbol.make(null, name);
+        SyntaxSymbol identifier = myVspace.makeSyntaxSymbol(name);
 
         identifier = predefine(identifier, null);
         NsDefinedBinding binding = (NsDefinedBinding) identifier.getBinding();
@@ -716,7 +713,7 @@ abstract class Namespace
 
         for (ProvidedBinding provided : module.providedBindings())
         {
-            SyntaxSymbol id = SyntaxSymbol.make(null, provided.getName());
+            SyntaxSymbol id = myVspace.makeSyntaxSymbol(provided.getName());
             id = (SyntaxSymbol) Syntax.applyContext(eval, context, id);
             installRequiredBinding(eval, id, provided);
         }
@@ -742,7 +739,7 @@ abstract class Namespace
                 // TODO Error reporting is bad here, it's lost the location of
                 //   the unbound id so it reports the entire require form (when
                 //   this gets wrapped.
-                SyntaxSymbol sym = SyntaxSymbol.make(null, exportedId);
+                SyntaxSymbol sym = eval.vspace().makeSyntaxSymbol(exportedId);
                 throw new UnboundIdentifierException(sym);
             }
 

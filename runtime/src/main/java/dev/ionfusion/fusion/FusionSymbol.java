@@ -16,7 +16,6 @@ import com.amazon.ion.IonWriter;
 import com.amazon.ion.ValueFactory;
 import com.amazon.ion.util.IonTextUtils;
 import dev.ionfusion.fusion.FusionBool.BaseBool;
-import dev.ionfusion.fusion._private.InternMap;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -34,35 +33,6 @@ final class FusionSymbol
         static final BaseSymbol[] EMPTY_ARRAY = new BaseSymbol[0];
 
         private BaseSymbol() {}
-
-
-        /**
-         * NOT FOR APPLICATION USE!
-         *
-         * @param value may be null to make {@code null.symbol}.
-         */
-        static BaseSymbol internSymbol(String value)
-        {
-            if (value == null) return NULL_SYMBOL;
-
-            return ourActualSymbols.intern(value);
-        }
-
-        /**
-         * NOT FOR APPLICATION USE!
-         */
-        static BaseSymbol[] internSymbols(String[] names)
-        {
-            int len = names.length;
-            if (len == 0) return EMPTY_ARRAY;
-
-            BaseSymbol[] syms = new BaseSymbol[len];
-            for (int i = 0; i < len; i++)
-            {
-                syms[i] = internSymbol(names[i]);
-            }
-            return syms;
-        }
 
 
         /**
@@ -99,7 +69,14 @@ final class FusionSymbol
         @Override
         public BaseSymbol annotate(Evaluator eval, BaseSymbol[] annotations)
         {
-            return FusionSymbol.annotate(eval.vspace(), this, annotations);
+            return annotate(eval.vspace(), annotations);
+        }
+
+        BaseSymbol annotate(StandardValueSpace vspace, BaseSymbol[] annotations)
+        {
+            // This is overridden by AnnotatedSymbol.
+            if (annotations.length == 0) return this;
+            return vspace.intern(new AnnotatedSymbol(annotations, this));
         }
 
         @Override
@@ -236,6 +213,14 @@ final class FusionSymbol
 
 
     /**
+     * ONLY FOR USE BY {@link StandardValueSpace}.
+     */
+    static BaseSymbol makeActualSymbol(String content)
+    {
+        return new ActualSymbol(content);
+    }
+
+    /**
      * An interned, unannotated, non-null symbol.
      */
     private static final class ActualSymbol
@@ -364,9 +349,9 @@ final class FusionSymbol
         }
 
         @Override
-        public BaseSymbol annotate(Evaluator eval, BaseSymbol[] annotations)
+        public BaseSymbol annotate(StandardValueSpace vspace, BaseSymbol[] annotations)
         {
-            return myValue.annotate(eval, annotations);
+            return myValue.annotate(vspace, annotations);
         }
 
         @Override
@@ -425,64 +410,8 @@ final class FusionSymbol
     // Constructors
 
 
-    private static final BaseSymbol NULL_SYMBOL  = new NullSymbol();
-
-    /**
-     * Interning table for unannotated, non-null symbols.
-     */
-    private static final InternMap<String, ActualSymbol>
-        ourActualSymbols = new InternMap<>(ActualSymbol::new, 256);
-
-    // TODO Perhaps add expungeStaleEntries() to force GC of intern tables.
-    // Because WeakHashMap only purges entries on access, we could end up with
-    // a bunch of garbage in there after code compilation is done, and unless
-    // new symbols are instantiated there won't be any access to the map and no
-    // garbage released. Perhaps it's worth expunging the map (via size())
-    // after significant processing events like compiling code.
-
-
-    /**
-     * @param value must not be empty but may be null to make
-     * {@code null.symbol}.
-     *
-     * @return not null.
-     */
-    static BaseSymbol makeSymbol(Evaluator eval, String value)
-    {
-        return BaseSymbol.internSymbol(value);
-    }
-
-
-    private static BaseSymbol annotate(ValueSpace vspace,
-                                       BaseSymbol unannotated,
-                                       BaseSymbol[] annotations)
-    {
-        assert ! (unannotated instanceof AnnotatedSymbol);
-
-        if (annotations.length == 0) return unannotated;
-
-        // No way to avoid allocating a key aggregating the value+annotations.
-        AnnotatedSymbol sym = new AnnotatedSymbol(annotations, unannotated);
-
-        return vspace.intern(sym);
-    }
-
-
-    /**
-     * @param annotations must not be null and must not contain elements
-     * that are null or empty. This method assumes ownership of the array
-     * and it must not be modified later.
-     * @param value may be null to make {@code null.symbol}.
-     *
-     * @return not null.
-     */
-    static BaseSymbol makeSymbol(Evaluator eval,
-                                 String[]  annotations,
-                                 String    value)
-    {
-        BaseSymbol base = makeSymbol(eval, value);
-        return annotate(eval.vspace(), base, BaseSymbol.internSymbols(annotations));
-    }
+    // TODO This singleton should move into the ValueSpace.
+    static final BaseSymbol NULL_SYMBOL  = new NullSymbol();
 
 
     /**

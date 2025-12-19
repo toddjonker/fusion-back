@@ -6,7 +6,6 @@ package dev.ionfusion.fusion;
 import static com.amazon.ion.util.IonTextUtils.printQuotedSymbol;
 import static dev.ionfusion.fusion.FusionSexp.isSexp;
 import static dev.ionfusion.fusion.FusionSymbol.isSymbol;
-import static dev.ionfusion.fusion.FusionSymbol.makeSymbol;
 import static dev.ionfusion.fusion.FusionSyntax.syntaxTrackOrigin;
 import static dev.ionfusion.fusion.Syntax.datumToSyntax;
 
@@ -127,9 +126,12 @@ final class ProvideForm
     {
         SyntaxChecker check = new SyntaxChecker(eval, specForm);
 
+        StandardValueSpace vspace = eval.vspace();
         GlobalState globalState = eval.getGlobalState();
 
         SyntaxSymbol specId = specForm.firstIdentifier(eval);
+        SourceLocation specLoc = specId.getLocation();
+
         Binding b = specForm.firstTargetBinding(eval);
         if (b == globalState.myKernelAllDefinedOutBinding)
         {
@@ -141,8 +143,7 @@ final class ProvideForm
             // but is needed for syntax analysis and origin tracking.
             SyntaxSymbol allDefinedSym =
                 syntaxTrackOrigin(eval,
-                                  SyntaxSymbol.make(specId.getLocation(),
-                                                    makeSymbol(eval, "all_defined")),
+                                  vspace.makeSyntaxSymbol("all_defined", specLoc),
                                   specForm, specId);
             expanded.add(specForm.copyReplacingChildren(eval, allDefinedSym));
 
@@ -178,8 +179,7 @@ final class ProvideForm
 
             SyntaxSymbol renameSym =
                 syntaxTrackOrigin(eval,
-                                  SyntaxSymbol.make(specId.getLocation(),
-                                                    makeSymbol(eval, "rename")),
+                                  vspace.makeSyntaxSymbol("rename", specLoc),
                                   specForm, specId);
 
             int arity = check.arityAtLeast(1);

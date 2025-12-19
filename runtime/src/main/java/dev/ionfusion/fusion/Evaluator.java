@@ -14,7 +14,6 @@ import static dev.ionfusion.fusion.FusionSexp.pair;
 import static dev.ionfusion.fusion.FusionSexp.sexpFromIonSequence;
 import static dev.ionfusion.fusion.FusionString.makeString;
 import static dev.ionfusion.fusion.FusionStruct.structFromIonStruct;
-import static dev.ionfusion.fusion.FusionSymbol.makeSymbol;
 import static dev.ionfusion.fusion.FusionTimestamp.makeTimestamp;
 import static dev.ionfusion.fusion.FusionVoid.voidValue;
 import static dev.ionfusion.fusion._private.FusionUtils.friendlyIndex;
@@ -159,7 +158,7 @@ class Evaluator
             case SYMBOL:
             {
                 String text = ((IonSymbol)value).stringValue();
-                return makeSymbol(this, annotations, text);
+                return myVspace.makeAnnotatedSymbol(text, annotations);
             }
             case STRING:
             {

@@ -8,7 +8,6 @@ import static dev.ionfusion.fusion.FusionSexp.isPair;
 import static dev.ionfusion.fusion.FusionSexp.isSexp;
 import static dev.ionfusion.fusion.FusionSexp.unsafePairHead;
 import static dev.ionfusion.fusion.FusionSexp.unsafePairTail;
-import static dev.ionfusion.fusion.FusionSymbol.makeSymbol;
 import static dev.ionfusion.fusion.FusionSyntax.syntaxTrackOrigin;
 import static dev.ionfusion.fusion.FusionText.isText;
 import static dev.ionfusion.fusion.FusionVoid.voidValue;
@@ -204,9 +203,9 @@ final class RequireForm
             throws FusionException
     {
         SyntaxSymbol specId = spec.firstIdentifier(eval);
+        SourceLocation specLoc = specId.getLocation();
         return syntaxTrackOrigin(eval,
-                                 SyntaxSymbol.make(specId.getLocation(),
-                                                   makeSymbol(eval, primitiveImportName)),
+                                 eval.vspace().makeSyntaxSymbol(primitiveImportName, specLoc),
                                  spec,
                                  specId);
     }
@@ -318,7 +317,7 @@ final class RequireForm
                         FusionSymbol.BaseSymbol name = id.getName();
 
                         // Mint a fresh identifier with only the context from the module path.
-                        SyntaxSymbol localId = SyntaxSymbol.make(id.getLocation(), name);
+                        SyntaxSymbol localId = eval.vspace().makeSyntaxSymbol(name, id.getLocation());
                         localId = (SyntaxSymbol) Syntax.applyContext(eval, context, localId);
 
                         mappings[i] = new RequireRenameMapping(localId, name);
@@ -350,7 +349,7 @@ final class RequireForm
                     {
                         // Mint a fresh identifier with only the context from the module path.
                         String newBindingName = prefixId.stringValue() + providedName.stringValue();
-                        SyntaxSymbol localId = SyntaxSymbol.make(eval, newBindingName);
+                        SyntaxSymbol localId = eval.vspace().makeSyntaxSymbol(newBindingName);
                         localId = (SyntaxSymbol) Syntax.applyContext(eval, context, localId);
 
                         mappings[i] = new RequireRenameMapping(localId, providedName);

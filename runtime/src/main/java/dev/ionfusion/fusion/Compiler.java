@@ -12,7 +12,6 @@ import static dev.ionfusion.fusion.FusionString.stringToJavaString;
 import static dev.ionfusion.fusion.FusionStruct.emptyStruct;
 import static dev.ionfusion.fusion.FusionStruct.immutableStruct;
 import static dev.ionfusion.fusion.FusionStruct.nullStruct;
-import static dev.ionfusion.fusion.FusionSymbol.makeSymbol;
 import static dev.ionfusion.fusion.FusionValue.isAnnotated;
 import static dev.ionfusion.fusion.FusionValue.isAnyNull;
 import static dev.ionfusion.fusion.FusionVoid.isVoid;
@@ -64,7 +63,7 @@ class Compiler
 
         // This magic value exists in Fusion code!
         // TODO It should not be a symbol, but a private value of some kind.
-        myStxPropRetainArgLocs = makeSymbol(eval, "#%plain_app retain arg locations");
+        myStxPropRetainArgLocs = eval.vspace().makeActualSymbol("#%plain_app retain arg locations");
     }
 
 

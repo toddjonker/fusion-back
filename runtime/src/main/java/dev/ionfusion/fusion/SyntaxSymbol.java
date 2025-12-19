@@ -5,7 +5,6 @@ package dev.ionfusion.fusion;
 
 import static com.amazon.ion.util.IonTextUtils.printQuotedSymbol;
 import static dev.ionfusion.fusion.FusionBool.makeBool;
-import static dev.ionfusion.fusion.FusionSymbol.makeSymbol;
 import static dev.ionfusion.fusion.FusionSyntax.checkIdentifierArg;
 import static dev.ionfusion.fusion._private.FusionUtils.EMPTY_OBJECT_ARRAY;
 import static dev.ionfusion.fusion._private.FusionUtils.EMPTY_STRING_ARRAY;
@@ -76,16 +75,6 @@ final class SyntaxSymbol
                              BaseSymbol     symbol)
     {
         return new SyntaxSymbol(null, loc, EMPTY_OBJECT_ARRAY, symbol);
-    }
-
-
-    /**
-     * @param value may be null.
-     */
-    static SyntaxSymbol make(Evaluator eval, String value)
-    {
-        BaseSymbol datum = makeSymbol(eval, value);
-        return new SyntaxSymbol(null, null, EMPTY_OBJECT_ARRAY, datum);
     }
 
 
@@ -316,7 +305,7 @@ final class SyntaxSymbol
             if (b instanceof FreeBinding)
             {
                 Evaluator eval = expander.getEvaluator();
-                BaseSymbol topSym = makeSymbol(eval, "#%top");
+                BaseSymbol topSym = eval.vspace().makeActualSymbol("#%top");
                 SyntaxSymbol top =
                     new SyntaxSymbol(myWraps,
                                      /*location*/ null,

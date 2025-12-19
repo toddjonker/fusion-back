@@ -13,7 +13,6 @@ import static dev.ionfusion.fusion.FusionIo.dispatchIonize;
 import static dev.ionfusion.fusion.FusionIo.dispatchWrite;
 import static dev.ionfusion.fusion.FusionNumber.makeInt;
 import static dev.ionfusion.fusion.FusionNumber.unsafeTruncateIntToJavaInt;
-import static dev.ionfusion.fusion.FusionSymbol.BaseSymbol.internSymbols;
 import static dev.ionfusion.fusion.FusionVoid.voidValue;
 import static dev.ionfusion.fusion._private.FusionUtils.EMPTY_OBJECT_ARRAY;
 
@@ -53,7 +52,8 @@ final class FusionList
      */
     static BaseList listFromIonSequence(Evaluator eval, IonSequence seq)
     {
-        BaseSymbol[] annotations = internSymbols(seq.getTypeAnnotations());
+        BaseSymbol[] annotations =
+            eval.vspace().makeActualSymbols(seq.getTypeAnnotations());
 
         if (seq.isNullValue())
         {
@@ -85,7 +85,7 @@ final class FusionList
 
     static NullList nullList(Evaluator eval, String[] annotations)
     {
-        return nullList(eval, internSymbols(annotations));
+        return nullList(eval, eval.vspace().makeActualSymbols(annotations));
     }
 
 
@@ -148,7 +148,7 @@ final class FusionList
                                        String[] annotations,
                                        Object[] elements)
     {
-        return immutableList(eval, internSymbols(annotations), elements);
+        return immutableList(eval, eval.vspace().makeActualSymbols(annotations), elements);
     }
 
 
@@ -193,7 +193,7 @@ final class FusionList
                                        String[] annotations,
                                        List<?> elements)
     {
-        return immutableList(eval, internSymbols(annotations), elements);
+        return immutableList(eval, eval.vspace().makeActualSymbols(annotations), elements);
     }
 
 

@@ -3,7 +3,6 @@
 
 package dev.ionfusion.fusion;
 
-import static dev.ionfusion.fusion.FusionSymbol.BaseSymbol.internSymbols;
 import static dev.ionfusion.fusion.FusionSymbol.BaseSymbol.unsafeSymbolsToJavaStrings;
 
 import dev.ionfusion.fusion.FusionSymbol.BaseSymbol;
@@ -21,7 +20,7 @@ interface AnnotatableValue<Self extends AnnotatableValue<Self>>
      */
     default Self annotate(Evaluator eval, String[] annotations)
     {
-        return annotate(eval, internSymbols(annotations));
+        return annotate(eval, eval.vspace().makeActualSymbols(annotations));
     }
 
     /**

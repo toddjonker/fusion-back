@@ -9,7 +9,6 @@ import static dev.ionfusion.fusion.FusionNull.isNullNull;
 import static dev.ionfusion.fusion.FusionNumber.checkIntArgToJavaInt;
 import static dev.ionfusion.fusion.FusionNumber.checkNullableIntArg;
 import static dev.ionfusion.fusion.FusionSymbol.checkRequiredSymbolArg;
-import static dev.ionfusion.fusion.FusionSymbol.makeSymbol;
 
 import dev.ionfusion.fusion.FusionSymbol.BaseSymbol;
 import java.io.IOException;
@@ -409,9 +408,10 @@ final class Records
             Procedure accessor
                 = new RecordAccessorProc(type);
 
-            ctor.inferObjectName(makeSymbol(eval, "make_" + name));
-            pred.inferObjectName(makeSymbol(eval, "is_" + name));
-            accessor.inferObjectName(makeSymbol(eval, name + "_element"));
+            StandardValueSpace vspace = eval.vspace();
+            ctor.inferObjectName(vspace.makeActualSymbol("make_" + name));
+            pred.inferObjectName(vspace.makeActualSymbol("is_" + name));
+            accessor.inferObjectName(vspace.makeActualSymbol(name + "_element"));
 
             return new Object[] { type, ctor, pred, accessor };
         }

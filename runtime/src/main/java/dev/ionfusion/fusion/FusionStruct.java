@@ -14,8 +14,6 @@ import static dev.ionfusion.fusion.FusionIo.dispatchWrite;
 import static dev.ionfusion.fusion.FusionList.checkNullableListArg;
 import static dev.ionfusion.fusion.FusionList.unsafeJavaIterate;
 import static dev.ionfusion.fusion.FusionList.unsafeListSize;
-import static dev.ionfusion.fusion.FusionSymbol.BaseSymbol.internSymbols;
-import static dev.ionfusion.fusion.FusionSymbol.makeSymbol;
 import static dev.ionfusion.fusion.FusionText.checkRequiredTextArg;
 import static dev.ionfusion.fusion.FusionText.textToJavaString;
 import static dev.ionfusion.fusion.FusionText.unsafeTextToJavaString;
@@ -61,8 +59,8 @@ final class FusionStruct
 
     static Object structFromIonStruct(Evaluator eval, IonStruct struct)
     {
-        String[] annStrings = struct.getTypeAnnotations();
-        BaseSymbol[] annotations = internSymbols(annStrings);
+        BaseSymbol[] annotations =
+            eval.vspace().makeActualSymbols(struct.getTypeAnnotations());
 
         // There's no benefit to being lazy with null.struct or {}.
         if (struct.isNullValue())
@@ -98,10 +96,14 @@ final class FusionStruct
 
     static final class Builder
     {
+        private final StandardValueSpace                    myVspace;
         private final MultiHashTrie.Builder<String, Object> myTrieBuilder =
             MultiHashTrie.builderMulti();
 
-        private Builder() {}
+        private Builder(StandardValueSpace vspace)
+        {
+            myVspace = vspace;
+        }
 
         /**
          * Adds a new field to the struct, retaining existing fields with the
@@ -122,7 +124,7 @@ final class FusionStruct
 
         NonNullImmutableStruct buildImmutable(String[] annotations)
         {
-            return buildImmutable(internSymbols(annotations));
+            return buildImmutable(myVspace.makeActualSymbols(annotations));
         }
 
         NonNullImmutableStruct buildImmutable(BaseSymbol[] annotations)
@@ -139,7 +141,7 @@ final class FusionStruct
 
         MutableStruct buildMutable(String[] annotations)
         {
-            return buildMutable(internSymbols(annotations));
+            return buildMutable(myVspace.makeActualSymbols(annotations));
         }
 
         MutableStruct buildMutable(BaseSymbol[] annotations)
@@ -152,7 +154,7 @@ final class FusionStruct
     static Builder builder(Evaluator eval)
     {
         Objects.requireNonNull(eval);
-        return new Builder();
+        return new Builder(eval.vspace());
     }
 
 
@@ -1660,7 +1662,7 @@ final class FusionStruct
         {
             Map.Entry<String, Object> entry = myEntryIterator.next();
 
-            Object fieldName = makeSymbol(eval, entry.getKey());
+            Object fieldName = eval.vspace().makeActualSymbol(entry.getKey());
             Object value     = entry.getValue();
 
             // TODO route multi-values through the evaluator

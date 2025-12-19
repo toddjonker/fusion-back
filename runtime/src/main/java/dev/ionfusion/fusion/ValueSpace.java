@@ -20,4 +20,18 @@ interface ValueSpace
      * @param <T> the type of value.
      */
     <T> T intern(T value);
+
+
+    Object makeSymbol(String text);
+
+    /**
+     * @param texts must not be null.
+     * @return not null.
+     */
+    Object[] makeSymbols(String... texts);
+
+    /**
+     * @param text may be null to make {@code null.symbol}.
+     */
+    Object makeSyntaxSymbol(String text);
 }

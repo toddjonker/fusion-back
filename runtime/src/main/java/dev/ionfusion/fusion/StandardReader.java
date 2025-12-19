@@ -14,7 +14,6 @@ import static dev.ionfusion.fusion.FusionSexp.immutableSexp;
 import static dev.ionfusion.fusion.FusionSexp.nullSexp;
 import static dev.ionfusion.fusion.FusionString.makeString;
 import static dev.ionfusion.fusion.FusionStruct.nullStruct;
-import static dev.ionfusion.fusion.FusionSymbol.makeSymbol;
 import static dev.ionfusion.fusion.FusionTimestamp.makeTimestamp;
 import static dev.ionfusion.fusion.SourceLocation.forCurrentSpan;
 import static dev.ionfusion.fusion.SyntaxValue.STX_PROPERTY_ORIGINAL;
@@ -99,6 +98,8 @@ class StandardReader
                                boolean    readingSyntax)
         throws FusionException, IonException
     {
+        StandardValueSpace vspace = eval.vspace();
+
         IonType type = source.getType();
         assert type != null;
 
@@ -189,7 +190,7 @@ class StandardReader
             case SYMBOL:
             {
                 String value = source.stringValue();
-                datum = makeSymbol(eval, anns, value);
+                datum = vspace.makeAnnotatedSymbol(value, anns);
                 break;
             }
             case BLOB:
