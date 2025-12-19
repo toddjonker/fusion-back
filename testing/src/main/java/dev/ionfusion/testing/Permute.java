@@ -23,6 +23,7 @@ public class Permute
     void generatePermutations(Collection<T[]> perms, T[] values)
     {
         assert values.length != 0;
+        // TODO clone `perms` instead of mutating it?
         generatePermutations(perms, values, values.length);
     }
 
@@ -115,7 +116,7 @@ public class Permute
 
 
     /**
-     * Generate all permutations of all subsets of the given values.
+     * Generate all permutations of all nonempty subsets of the given values.
      *
      * @param values the set of values to permute; must be non-empty.
      */
@@ -123,6 +124,18 @@ public class Permute
     ArrayList<T[]> generateSubsetPermutations(T[] values)
     {
         return generateSubsetPermutations(new ArrayList<T[]>(), values);
+    }
+
+    /**
+     * Generate all permutations of all subsets of the given values, including the empty set.
+     *
+     * @param values the set of values to permute; must be non-empty.
+     */
+    public static <T> ArrayList<T[]> generateSubsetPermutationsWithEmpty(T[] values)
+    {
+        ArrayList<T[]> r = generateSubsetPermutations(new ArrayList<T[]>(), values);
+        r.add(Arrays.copyOf(values, 0));
+        return r;
     }
 
     /**
